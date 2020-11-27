@@ -1,17 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Head from "next/head";
 import { DefaultSeo } from "next-seo";
-import Router, { useRouter } from "next/router";
+import Router from "next/router";
 import { useDispatch } from "react-redux";
 
 import NProgress from "nprogress";
-import { Stack } from "@chakra-ui/react";
-import { BiArrowBack, BiArrowToTop } from "react-icons/bi";
+import { Stack, Flex, Box } from "@chakra-ui/react";
 
 import AppProvider from "components/AppProvider";
 import AppToasts from "components/AppToasts";
-
-import siteMeta from "configs/site.meta";
+import AppContainer from "components/AppContainer";
+import Topbar from "components/topbar";
 import { wrapper } from "redux/store.js";
 
 import "styles/globals.css";
@@ -45,9 +44,11 @@ function MyApp({ Component, pageProps }) {
 
       <AppToasts />
 
-      <Stack>
+      <Box bg="red.20" width="full" height="full">
+        <Topbar />
+
         <Component {...pageProps} />
-      </Stack>
+      </Box>
     </AppProvider>
   );
 }

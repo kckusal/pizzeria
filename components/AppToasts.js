@@ -12,7 +12,7 @@ export default function AppToasts() {
   const toasts = useSelector(state => state.toasts);
 
   useEffect(() => {
-    if (toasts.length > 0) {
+    if (toasts) {
       toast(toasts);
       dispatch(removeToast());
     }

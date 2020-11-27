@@ -1,0 +1,27 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": ["plugin:react/recommended", "standard"],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@babel"],
+  "rules": {
+    "quotes": ["off", "double"],
+    "semi": ["error", "always", { "omitLastInOneLineBlock": false }],
+    "space-before-function-paren": ["off", "always"],
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/prop-types": [1, { "skipUndeclared": true }],
+    "prefer-regex-literals": ["off", "always"],
+    "quote-props": ["error", "as-needed", { "unnecessary": false }]
+  }
+}

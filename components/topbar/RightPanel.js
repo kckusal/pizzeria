@@ -1,10 +1,20 @@
 import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
 
-import { Flex, Stack, Box } from "@chakra-ui/react";
+import {
+  Flex,
+  Stack,
+  Box,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem
+} from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import { BiUserCircle } from "react-icons/bi";
 
 import Link from "components/Link";
+import { changeCurrency } from "redux/actions";
 
 function TopbarButton({ children, ...rest }) {
   return (
@@ -24,7 +34,14 @@ function TopbarButton({ children, ...rest }) {
 }
 
 function RightPanel() {
+  const dispatch = useDispatch();
   const { pathname } = useRouter();
+
+  const currency = useSelector(state => state.app.currency);
+
+  const onChangeCurrency = code => {
+    dispatch(changeCurrency(code));
+  };
 
   return (
     <Flex width="full" height="full" justify="flex-end" align="stretch">
@@ -52,6 +69,30 @@ function RightPanel() {
           <FiShoppingCart />
         </Box>
       </TopbarButton>
+
+      <Menu isLazy arrowSize={4}>
+        <TopbarButton>
+          <MenuButton
+            height="full"
+            width="60px"
+            px={3}
+            textTransform="uppercase"
+          >
+            {currency.currentCode}
+          </MenuButton>
+        </TopbarButton>
+
+        <MenuList color="gray.700">
+          {currency.allCodes.map(code => {
+            const { label } = currency.optionsByCode[code];
+            return (
+              <MenuItem key={code} onClick={() => onChangeCurrency(code)}>
+                {label}
+              </MenuItem>
+            );
+          })}
+        </MenuList>
+      </Menu>
 
       <TopbarButton px={2} as={Link} href="/login">
         <BiUserCircle size="25" />

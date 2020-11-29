@@ -9,11 +9,11 @@ export default function AppToasts() {
   const dispatch = useDispatch();
   const toast = createStandaloneToast();
 
-  const toasts = useSelector(state => state.toasts);
+  const toasts = useSelector(state => state.app.toasts);
 
   useEffect(() => {
-    if (toasts) {
-      toast(toasts);
+    if (toasts.length > 0) {
+      toast(toasts[0]);
       dispatch(removeToast());
     }
   }, [toasts]);

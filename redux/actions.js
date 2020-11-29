@@ -74,16 +74,16 @@ export function loginSuccessful(user = null) {
   };
 }
 
-export function addMultipleInCart(items) {
+export function addMultipleInCart(itemIds) {
   return {
-    type: actionTypes.ADD_IN_CART,
+    type: actionTypes.ADD_MULTIPLE_IN_CART,
     payload: {
-      items,
+      ids: itemIds,
       toast: {
         status: "success",
         title: "Added to cart!",
-        description: `You have added ${items.length} item${
-          items.length > 1 ? "s" : ""
+        description: `You have added ${itemIds.length} item${
+          itemIds.length > 1 ? "s" : ""
         } to cart.`,
         isClosable: true,
         duration: 9000,
@@ -95,7 +95,7 @@ export function addMultipleInCart(items) {
 
 export function removeMultipleFromCart(ids = []) {
   return {
-    type: actionTypes.REMOVE_FROM_CART,
+    type: actionTypes.REMOVE_MULTIPLE_FROM_CART,
     payload: {
       ids,
       toast: {

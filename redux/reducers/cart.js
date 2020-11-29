@@ -1,58 +1,60 @@
 import { actionTypes } from "../actions";
 
 const initialState = {
-  items: {
-    count: 0,
-    allIds: [],
-    byId: {}
-  }
+  itemIds: [],
+  quantityByItemId: {}
 };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.ADD_MULTIPLE_IN_CART: {
-      const items = action.payload.items;
+      const { items } = action.payload;
 
-      if (Array.isArray(items)) {
-        const newIds = items.map(item => item.id);
-        const newItemsById = items.reduce((acc, item) => {
-          acc[item.id] = item;
-          return acc;
-        }, {});
+      return items.reduce((acc, item) => {
+        if (!state.itemIds.includes(item.id)) {
+          acc.itemIds.push(item.id);
+          acc.quantityByItemId[item.id] += 1;
+        }
 
-        return {
-          items: {
-            count: newIds.length,
-            allIds: [...state.items.allIds, ...newIds],
-            byId: { ...state.items.byId, ...newItemsById }
-          }
-        };
-      }
-
-      break;
+        return acc;
+      }, state);
     }
 
     case actionTypes.REMOVE_MULTIPLE_FROM_CART: {
-      const ids = action.payload.ids;
+      const { ids } = action.payload;
 
-      if (Array.isArray(ids)) {
-        const remainingIds = state.items.filter(id => !ids.includes(id));
+      return ids.reduce((acc, id) => {
+        if (state.itemIds.includes(id)) {
+          acc.itemsIds = acc.itemIds.filter(itemId => id !== itemId);
 
-        const remainingItemsById = remainingIds.reduce((acc, id) => {
-          acc[id] = state.items[id];
-          return acc;
-        }, {});
+          const { id, temp } = acc.quantityByItemId;
+          acc.quantityByItemId = temp;
+        }
 
-        return {
-          items: {
-            count: remainingIds.length,
-            allIds: remainingIds,
-            byId: remainingItemsById
-          }
-        };
-      }
+        return acc;
+      }, state);
+    }
 
-      break;
+    case actionTypes.INCREMENT_QUANTITY_CART: {
+      const { id, step } = action.payload;
+
+      const quantityByItemId = {
+        ...state.quantityByItemId,
+        [id]: state.quantityByItemId[id] + step
+      };
+
+      return { ...state, quantityByItemId };
+    }
+
+    case actionTypes.DECREMENT_QUANTITY_CART: {
+      const { id, step } = action.payload;
+
+      const quantityByItemId = {
+        ...state.quantityByItemId,
+        [id]: Math.max(state.quantityByItemId[id] - step, 0)
+      };
+
+      return { ...state, quantityByItemId };
     }
 
     default:

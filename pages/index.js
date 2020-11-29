@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   Stack,
@@ -7,127 +7,27 @@ import {
   Heading,
   Wrap,
   WrapItem,
-  Image,
-  Text,
-  Button
+  ButtonGroup,
+  IconButton
 } from "@chakra-ui/react";
+import { BsListTask, BsGrid } from "react-icons/bs";
 
 import AppContainer from "components/AppContainer";
 import SEO from "components/seo";
-import Currency from "components/currency";
-
-function MenuItemCounter({ data }) {
-  const [count, setCount] = useState(0);
-  const incrementBtnRef = useRef();
-
-  const increment = () => {
-    setCount(prev => prev + 1);
-  };
-
-  const decrement = () => {
-    setCount(prev => Math.max(prev - 1, 0));
-  };
-
-  const addToCart = () => {
-    if (count === 0) {
-      incrementBtnRef.current.focus();
-      return;
-    }
-  };
-
-  return (
-    <>
-      <Flex justify="center" fontSize="1.3rem" pt={2}>
-        <Button size="sm" fontSize="1.5rem" pt={0} pb="2px" onClick={decrement}>
-          -
-        </Button>
-        <Text as="span" width="40px" mx={2} textAlign="center">
-          {count}
-        </Text>
-        <Button
-          ref={incrementBtnRef}
-          size="sm"
-          fontSize="1.5rem"
-          pt="0px"
-          pb="2px"
-          onClick={increment}
-        >
-          +
-        </Button>
-      </Flex>
-
-      <Button colorScheme="primary" onClick={addToCart}>
-        Add to Cart : &nbsp; <Currency value={data.price * count} />
-      </Button>
-    </>
-  );
-}
-
-function MenuItem({ data, ...restProps }) {
-  const { title, type, image, price, discount } = data;
-  const placeholderImageUrl = useSelector(
-    state => state.constants.placeholderImageUrl
-  );
-
-  return (
-    <Stack
-      as={WrapItem}
-      width="234px"
-      height="400px"
-      boxShadow="1"
-      bg="white"
-      role="group"
-      transition="box-shadow 0.3s linear, cursor 0.3s linear"
-      _hover={{ boxShadow: 4, cursor: "pointer" }}
-      {...restProps}
-    >
-      <Flex overflow="hidden" position="relative">
-        {discount && (
-          <Flex
-            position="absolute"
-            top="0px"
-            left="0px"
-            bg="gray.800"
-            color="gray.200"
-            width="65px"
-            height="45px"
-            justify="center"
-            align="center"
-            fontSize="xl"
-            zIndex="2"
-          >
-            <strong>- </strong>
-            {discount}
-          </Flex>
-        )}
-
-        <Image
-          src={image}
-          width="full"
-          fallbackSrc={placeholderImageUrl}
-          transition="filter 0.3s linear, transform 0.3s linear"
-          zIndex={1}
-          _groupHover={{ filter: "brightness(0.8)", transform: "scale(1.2)" }}
-        />
-      </Flex>
-
-      <Stack width="full" px={3} spacing={0}>
-        <Heading as="h3" fontSize="lg">
-          {title}
-        </Heading>
-        <Text color="gray.500">{type}</Text>
-
-        <Stack pt={2} spacing={4}>
-          <Currency value={price} justify="center" fontSize="2.1rem" />
-
-          <MenuItemCounter data={data} />
-        </Stack>
-      </Stack>
-    </Stack>
-  );
-}
+import MenuItemCard from "components/menu-item-card";
+import { loadMenu } from "redux/actions";
 
 export default function Home({ menu: { items } }) {
+  const dispatch = useDispatch();
+
+  const [listViewOn, setListViewOn] = useState(false);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      dispatch(loadMenu(items));
+    }
+  }, []);
+
   return (
     <AppContainer>
       <SEO
@@ -144,9 +44,30 @@ export default function Home({ menu: { items } }) {
           ** All the shown prices are discounts- and VAT- inclusive.
         </Flex>
 
+        <Flex justify="flex-end" align="center">
+          <ButtonGroup size="sm" isAttached variant="outline">
+            <IconButton
+              borderColor="gray.500"
+              icon={<BsListTask />}
+              mr="-1px"
+              onClick={() => setListViewOn(true)}
+            />
+            <IconButton
+              borderColor="gray.500"
+              icon={<BsGrid />}
+              onClick={() => setListViewOn(false)}
+            />
+          </ButtonGroup>
+        </Flex>
+
         <Wrap pt={8} spacing={8}>
           {items.map((item, i) => (
-            <MenuItem key={i} data={item} />
+            <MenuItemCard
+              as={WrapItem}
+              key={i}
+              data={item}
+              horizontal={listViewOn}
+            />
           ))}
         </Wrap>
       </Stack>
@@ -159,6 +80,7 @@ Home.getInitialProps = async () => {
     menu: {
       items: [
         {
+          id: 1,
           title: "Sample Pizza Title",
           type: "dominos",
           image:
@@ -166,10 +88,12 @@ Home.getInitialProps = async () => {
           ingredients:
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "20",
-          currency: "usd"
+          currency: "usd",
+          discount: 20
         },
 
         {
+          id: 2,
           title: "Sample Pizza Title",
           type: "dominos",
           image:
@@ -181,6 +105,7 @@ Home.getInitialProps = async () => {
         },
 
         {
+          id: 3,
           title: "Sample Pizza Title",
           type: "dominos",
           image:
@@ -189,10 +114,11 @@ Home.getInitialProps = async () => {
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "25",
           currency: "usd",
-          discount: "50%"
+          discount: 50
         },
 
         {
+          id: 4,
           title: "Sample Pizza Title",
           type: "dominos",
           image:
@@ -204,6 +130,7 @@ Home.getInitialProps = async () => {
         },
 
         {
+          id: 5,
           title: "Sample Pizza Title",
           type: "dominos",
           image:

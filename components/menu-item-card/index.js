@@ -18,7 +18,7 @@ import { addMultipleInCart } from "redux/actions";
 function MenuItem({ data, horizontal = false, ...restProps }) {
   const dispatch = useDispatch();
 
-  const { id, title, type, image, price, discount } = data;
+  const { id, title, type, image, price, currencyCode, discount } = data;
 
   const placeholderImageUrl = useSelector(
     state => state.constants.placeholderImageUrl
@@ -129,6 +129,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
         >
           <Currency
             value={price}
+            sourceCurrencyCode={currencyCode}
             justify="center"
             fontSize="1.7rem"
             fontWeight="500"

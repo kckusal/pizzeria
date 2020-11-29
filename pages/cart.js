@@ -4,9 +4,11 @@ import {
   Box,
   Flex,
   Stack,
+  Heading,
   Button,
   Image,
   IconButton,
+  Tooltip,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -15,12 +17,13 @@ import {
 } from "@chakra-ui/react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
+import Link from "components/Link";
 import AppContainer from "components/AppContainer";
 import Currency from "components/currency";
 import { setQuantityInCart } from "redux/actions";
 
 function CartTableRow(props) {
-  const { id, title, type, image, price } = props.data;
+  const { id, title, type, image, price, currencyCode } = props.data;
 
   const dispatch = useDispatch();
 
@@ -40,9 +43,12 @@ function CartTableRow(props) {
       bg="white"
       width="full"
       height="80px"
-      boxShadow={2}
+      boxShadow={0}
       role="group"
       overflow="hidden"
+      transition="box-shadow 0.3s linear"
+      _hover={{ boxShadow: 1 }}
+      zIndex="0"
     >
       <Flex align="center" justify="center" overflow="hidden">
         <Image
@@ -63,8 +69,9 @@ function CartTableRow(props) {
         <Flex align="center">
           <Currency
             value={price}
+            sourceCurrencyCode={currencyCode}
             fontWeight="bold"
-            width="50px"
+            width="100px"
             justify="center"
           />
 
@@ -94,14 +101,22 @@ function CartTableRow(props) {
 
           <Currency
             value={quantity * price}
+            sourceCurrencyCode={currencyCode}
             fontWeight="bold"
-            width="50px"
+            width="100px"
             justify="center"
           />
         </Flex>
       </Stack>
 
-      <IconButton m={2} icon={<RiDeleteBin5Line />} variant="ghost" />
+      <Tooltip label="Remove from Cart" hasArrow arrowSize={8}>
+        <IconButton
+          m={4}
+          icon={<RiDeleteBin5Line />}
+          variant="ghost"
+          fontSize="2xl"
+        />
+      </Tooltip>
     </Flex>
   );
 }
@@ -123,8 +138,19 @@ function Cart() {
   return (
     <AppContainer>
       <Flex width="full" align="flex-start">
-        <Stack width="full" height="200vh" py={6} px={2}>
-          <Flex position="sticky" top="50px" py={6}>
+        <Stack width="full" height="200vh" py={8} px={2}>
+          <Heading as="h1" fontSize="2xl" mb={3}>
+            Manage Cart Items
+          </Heading>
+          <Flex
+            as={Link}
+            href="#checkout"
+            position="sticky"
+            top="50px"
+            py={2}
+            background="#eee"
+            zIndex="sticky"
+          >
             Proceed to checkout? (show in mobile)
           </Flex>
 
@@ -141,6 +167,8 @@ function Cart() {
           bg="white"
           px={4}
           py={6}
+          id="checkout"
+          ml={4}
         >
           <Flex as="h2" fontSize="xl" fontWeight="500" justify="center">
             Checkout

@@ -5,14 +5,22 @@ import CurrencyFormat from "react-currency-format";
 
 function Currency({
   value,
-  currency = "usd",
+  sourceCurrencyCode,
   noPrefix = false,
   noSuffix = false,
   ...restProps
 }) {
-  const { prefix, suffix } = useSelector(
-    state => state.app.currency.optionsByCode[state.app.currency.currentCode]
+  const { prefix, suffix, ratePerDollar: targetRatePerDollar } = useSelector(
+    state =>
+      state.app.currency.optionsByCode[state.app.currency.currentCode || "usd"]
   );
+
+  const sourceRatePerDollar = useSelector(
+    state => state.app.currency.optionsByCode[sourceCurrencyCode]?.ratePerDollar
+  );
+
+  const valueInDollars = value * sourceRatePerDollar;
+  const valueInTargetCurrency = valueInDollars * targetRatePerDollar;
 
   return (
     <Flex align="center" {...restProps}>
@@ -23,7 +31,7 @@ function Currency({
       )}
 
       <CurrencyFormat
-        value={value}
+        value={parseFloat(valueInTargetCurrency).toFixed(2)}
         displayType="text"
         thousandSeparator={true}
       />

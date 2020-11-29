@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   Stack,
@@ -12,16 +12,26 @@ import {
 import { FiZoomIn } from "react-icons/fi";
 
 import Currency from "components/currency";
+import { AddedInCartIcon } from "components/icons";
+import { addMultipleInCart } from "redux/actions";
 
 function MenuItem({ data, horizontal = false, ...restProps }) {
+  const dispatch = useDispatch();
+
   const { id, title, type, image, price, discount } = data;
+
   const placeholderImageUrl = useSelector(
     state => state.constants.placeholderImageUrl
   );
+
   const addedInCart = useSelector(state => {
     const quantity = state.cart.quantityByItemId[id];
     return typeof quantity !== "undefined";
   });
+
+  const addMeToCart = () => {
+    dispatch(addMultipleInCart([id]));
+  };
 
   return (
     <Stack
@@ -128,7 +138,10 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
 
           <Flex width="full" height="40px" justify="center">
             {addedInCart ? (
-              <>Added in Cart</>
+              <Flex py={2} fontWeight="500" color="gray.600" align="center">
+                <Icon as={AddedInCartIcon} fontSize="lg" mr={2} />
+                Added in Cart
+              </Flex>
             ) : (
               <Button
                 width="full"
@@ -137,6 +150,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
                 variant="solid"
                 height="full"
                 _hover={{ boxShadow: "3" }}
+                onClick={addMeToCart}
               >
                 Add to Cart
               </Button>

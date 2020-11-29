@@ -45,8 +45,34 @@ function RightPanel() {
 
   return (
     <Flex width="full" height="full" justify="flex-end" align="stretch">
+      {!["/login", "/register"].includes(pathname) && (
+        <Menu isLazy arrowSize={4}>
+          <TopbarButton>
+            <MenuButton
+              height="full"
+              width="60px"
+              px={3}
+              textTransform="uppercase"
+            >
+              {currency.currentCode}
+            </MenuButton>
+          </TopbarButton>
+
+          <MenuList color="gray.700">
+            {currency.allCodes.map(code => {
+              const { label } = currency.optionsByCode[code];
+              return (
+                <MenuItem key={code} onClick={() => onChangeCurrency(code)}>
+                  {label}
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+        </Menu>
+      )}
+
       <TopbarButton as={Link} href="/cart" width="60px">
-        <Box position="relative" fontSize="xl">
+        <Box position="relative" fontSize="xl" ml={-2}>
           <Flex
             bg="gray.100"
             color="gray.800"
@@ -59,7 +85,7 @@ function RightPanel() {
             position="absolute"
             top="-8px"
             left="16px"
-            px={1}
+            pl={0}
             justify="center"
             align="center"
           >
@@ -69,30 +95,6 @@ function RightPanel() {
           <FiShoppingCart />
         </Box>
       </TopbarButton>
-
-      <Menu isLazy arrowSize={4}>
-        <TopbarButton>
-          <MenuButton
-            height="full"
-            width="60px"
-            px={3}
-            textTransform="uppercase"
-          >
-            {currency.currentCode}
-          </MenuButton>
-        </TopbarButton>
-
-        <MenuList color="gray.700">
-          {currency.allCodes.map(code => {
-            const { label } = currency.optionsByCode[code];
-            return (
-              <MenuItem key={code} onClick={() => onChangeCurrency(code)}>
-                {label}
-              </MenuItem>
-            );
-          })}
-        </MenuList>
-      </Menu>
 
       <TopbarButton px={2} as={Link} href="/login">
         <BiUserCircle size="25" />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button, Input, InputRightElement } from "@chakra-ui/react";
+import { debounce } from "lodash";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
 
 const PasswordInput = ({
@@ -18,7 +19,6 @@ const PasswordInput = ({
   const handleChange = e => {
     const value = String(e.target.value);
     let error = "";
-    console.log(value, minLength);
 
     if (minLength && value.length < minLength) {
       error = `Password should be at least ${minLength} characters long.`;
@@ -62,7 +62,7 @@ const PasswordInput = ({
         width="full"
         type={passwordShown ? "text" : "password"}
         placeholder="jds*(3#,2aFBI.isf8"
-        onChange={handleChange}
+        onChange={debounce(handleChange, 800)}
         {...restProps}
         pr="4rem"
       />

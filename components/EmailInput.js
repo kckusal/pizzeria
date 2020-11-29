@@ -1,11 +1,12 @@
 import { Input } from "@chakra-ui/react";
+import { debounce } from "lodash";
 
 function EmailInput({ onChange, onError, ...restProps }) {
   const handleChange = e => {
     const { value } = e.target;
     let error = "";
 
-    console.log(value);
+    // console.log(value);
 
     const isValid = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
       String(value).toLowerCase()
@@ -23,7 +24,7 @@ function EmailInput({ onChange, onError, ...restProps }) {
     }
   };
 
-  return <Input onChange={handleChange} {...restProps} />;
+  return <Input onChange={debounce(handleChange, 800)} {...restProps} />;
 }
 
 export default EmailInput;

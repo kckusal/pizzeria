@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import {
   Stack,
@@ -88,7 +88,7 @@ Home.getInitialProps = async () => {
           ingredients:
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "20",
-          currency: "usd",
+          currencyCode: "usd",
           discount: 20
         },
 
@@ -101,7 +101,7 @@ Home.getInitialProps = async () => {
           ingredients:
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "40",
-          currency: "usd"
+          currencyCode: "usd"
         },
 
         {
@@ -113,7 +113,7 @@ Home.getInitialProps = async () => {
           ingredients:
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "25",
-          currency: "usd",
+          currencyCode: "usd",
           discount: 50
         },
 
@@ -126,7 +126,7 @@ Home.getInitialProps = async () => {
           ingredients:
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "30",
-          currency: "usd"
+          currencyCode: "usd"
         },
 
         {
@@ -138,7 +138,7 @@ Home.getInitialProps = async () => {
           ingredients:
             "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
           price: "28",
-          currency: "usd"
+          currencyCode: "usd"
         }
       ]
     }

@@ -16,8 +16,11 @@ if (process.env.NODE_ENV !== "production") {
   */
 }
 
-export const onStoreCreated = store => {
-  const env = typeof window === "undefined" ? "Server" : "Client";
+export const onStoreCreated = (
+  store,
+  options = { savedToLocalStorage: false, isServer: false }
+) => {
+  const env = options.isServer ? "Server" : "Client";
   console.info(`[${env}]: Store created.`);
 };
 

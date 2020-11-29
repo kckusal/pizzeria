@@ -14,7 +14,7 @@ export const makeStore = context => {
 
   const store = createStore(rootReducer, existingState, middlewares);
 
-  onStoreCreated(store);
+  onStoreCreated(store, { savedToLocalStorage: true, isServer });
 
   if (!isServer) {
     store.subscribe(

@@ -41,12 +41,14 @@ function RightPanel() {
   const cartItemsCount = useSelector(state => state.cart.itemIds.length);
 
   const onChangeCurrency = code => {
-    dispatch(changeCurrency(code));
+    if (currency.currentCode !== code) {
+      dispatch(changeCurrency(code));
+    }
   };
 
   return (
     <Flex width="full" height="full" justify="flex-end" align="stretch">
-      {!["/login", "/register"].includes(pathname) && (
+      {!["/login", "/register"].includes(pathname) && currency.currentCode && (
         <Menu isLazy arrowSize={4}>
           <TopbarButton>
             <MenuButton
@@ -59,12 +61,12 @@ function RightPanel() {
             </MenuButton>
           </TopbarButton>
 
-          <MenuList color="gray.700">
+          <MenuList color="gray.700" boxShadow={6}>
             {currency.allCodes.map(code => {
-              const { label } = currency.optionsByCode[code];
+              const { label, symbol } = currency.optionsByCode[code];
               return (
                 <MenuItem key={code} onClick={() => onChangeCurrency(code)}>
-                  {label}
+                  {label} - {symbol}
                 </MenuItem>
               );
             })}

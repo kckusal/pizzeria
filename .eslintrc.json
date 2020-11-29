@@ -22,6 +22,7 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/prop-types": [1, { "skipUndeclared": true }],
     "prefer-regex-literals": ["off", "always"],
-    "quote-props": ["error", "as-needed", { "unnecessary": false }]
+    "quote-props": ["error", "as-needed", { "unnecessary": false }],
+    "multiline-ternary": ["off", "always"]
   }
 }

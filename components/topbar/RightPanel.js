@@ -38,6 +38,7 @@ function RightPanel() {
   const { pathname } = useRouter();
 
   const currency = useSelector(state => state.app.currency);
+  const cartItemsCount = useSelector(state => state.cart.itemIds.length);
 
   const onChangeCurrency = code => {
     dispatch(changeCurrency(code));
@@ -89,7 +90,7 @@ function RightPanel() {
             justify="center"
             align="center"
           >
-            5
+            {cartItemsCount}
           </Flex>
 
           <FiShoppingCart />

@@ -111,7 +111,22 @@ function Login() {
             <FormErrorMessage>{errors.password}</FormErrorMessage>
           </FormControl>
 
-          <Link href="#" mb={1} colorScheme="blue">
+          <Link
+            href="#"
+            mb={1}
+            colorScheme="blue"
+            onClick={e => {
+              e.preventDefault();
+
+              dispatch(
+                addToast({
+                  status: "info",
+                  title: "Missing",
+                  description: "This feature is yet to be added. :("
+                })
+              );
+            }}
+          >
             Forgot Password ?
           </Link>
 

@@ -32,3 +32,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# js file to quickly test small ideas
+playground.js

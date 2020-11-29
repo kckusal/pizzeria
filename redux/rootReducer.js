@@ -1,51 +1,32 @@
-import { actionTypes } from "./actions";
+import { combineReducers } from "redux";
+
 import { HYDRATE } from "next-redux-wrapper";
 
-export const initialState = {
-  nightMode: false,
-  currency: {
-    name: "USD",
-    label: "United States Dollar",
-    prefix: "$",
-    suffix: ""
-  },
-  placeholderImageUrl: "https://via.placeholder.com/150",
-  toasts: []
-};
+import { actionTypes } from "./actions";
+import app from "./reducers/app";
+import constants from "./reducers/constants";
+import menu from "./reducers/menu";
+import cart from "./reducers/cart";
+import user from "./reducers/user";
 
-function rootReducer(state, action) {
-  const newToast = action.payload?.toast;
+const mainReducer = combineReducers({
+  app,
+  constants,
+  menu,
+  cart,
+  user
+});
 
-  if (newToast) {
-    state = { ...state, toasts: [newToast, ...state.toasts] };
-  }
-
+const rootReducer = (state, action) => {
   switch (action.type) {
     case HYDRATE: {
       return { ...state, ...action.payload };
     }
 
-    case actionTypes.TOGGLE_NIGHT_MODE:
-      return { ...state, nightMode: !state.nightMode };
-
-    case actionTypes.CHANGE_CURRENCY:
-      return { ...state, currency: action.payload.currency };
-
-    case actionTypes.ADD_TOAST:
-      return { ...state, toasts: [...state.toasts, action.payload.toast] };
-
-    case actionTypes.REMOVE_TOAST:
-      const toastId = action.payload.toastId;
-      return {
-        ...state,
-        toasts: toastId
-          ? state.toasts.filter(toast => toast.id !== toastId)
-          : []
-      };
-
     default:
-      return state;
   }
-}
+
+  return mainReducer(state, action);
+};
 
 export default rootReducer;

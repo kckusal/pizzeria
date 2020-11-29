@@ -1,19 +1,33 @@
-import { applyMiddleware, createStore } from "redux";
+import { createStore } from "redux";
 import { createWrapper } from "next-redux-wrapper";
 
-import rootReducer, { initialState as preloadedState } from "./rootReducer";
+import rootReducer from "./rootReducer";
+import middlewares, { onStoreCreated } from "./middlewares/";
+import { get, set } from "./utils/localStorage";
 
-const bindMiddleware = middleware => {
-  if (process.env.NODE_ENV !== "production") {
-    const { composeWithDevTools } = require("redux-devtools-extension");
-    return composeWithDevTools(applyMiddleware(...middleware));
-  }
-  return applyMiddleware(...middleware);
-};
+const isServer = typeof window === "undefined";
 
 export const makeStore = context => {
-  const middlewares = bindMiddleware([]);
-  const store = createStore(rootReducer, preloadedState, middlewares);
+  const existingState = isServer
+    ? undefined
+    : get(process.env.NEXT_PUBLIC_LOCALSTORAGE_STORED_REDUX_STATE_KEY);
+
+  const store = createStore(rootReducer, existingState, middlewares);
+
+  onStoreCreated(store, { savedToLocalStorage: true, isServer });
+
+  if (!isServer) {
+    store.subscribe(
+      // we can do store.getState() here to do stuffs
+      // this subscription will be called every time some action is dispatched that changes some part of state
+      () => {
+        set(
+          process.env.NEXT_PUBLIC_LOCALSTORAGE_STORED_REDUX_STATE_KEY,
+          store.getState()
+        );
+      }
+    );
+  }
 
   return store;
 };

@@ -4,10 +4,17 @@ const initialState = {
   darkMode: false,
 
   currency: {
-    name: "usd",
-    label: "United States Dollar",
-    prefix: "$",
-    suffix: ""
+    currentCode: "usd",
+    allCodes: ["usd", "eur"],
+    optionsByCode: {
+      usd: {
+        label: "US Dollar",
+        symbol: "$",
+        prefix: "$",
+        suffix: ""
+      },
+      eur: { label: "Euro", symbol: "€", prefix: "€", suffix: "" }
+    }
   },
 
   toasts: []
@@ -25,7 +32,10 @@ export default function reducer(state = initialState, action) {
       return { ...state, darkMode: !state.darkMode };
 
     case actionTypes.CHANGE_CURRENCY:
-      return { ...state, currency: action.payload.currency };
+      return {
+        ...state,
+        currency: { ...state.currency, currentCode: action.payload.code }
+      };
 
     case actionTypes.ADD_TOAST:
       return { ...state, toasts: [...state.toasts, action.payload.toast] };

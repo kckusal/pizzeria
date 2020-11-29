@@ -10,7 +10,9 @@ function Currency({
   noSuffix = false,
   ...restProps
 }) {
-  const { prefix, suffix } = useSelector(state => state.app.currency);
+  const { prefix, suffix } = useSelector(
+    state => state.app.currency.optionsByCode[state.app.currency.currentCode]
+  );
 
   return (
     <Flex align="center" {...restProps}>

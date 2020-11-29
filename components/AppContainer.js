@@ -4,7 +4,7 @@ export default function AppContainer({ children, ...restProps }) {
   return (
     <Flex
       width="full"
-      maxWidth={800}
+      maxWidth={900}
       mx="auto"
       px={4}
       bg="blue.5"

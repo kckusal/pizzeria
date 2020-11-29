@@ -8,31 +8,37 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.ADD_MULTIPLE_IN_CART: {
-      const { items } = action.payload;
+      const { ids } = action.payload;
 
-      return items.reduce((acc, item) => {
-        if (!state.itemIds.includes(item.id)) {
-          acc.itemIds.push(item.id);
-          acc.quantityByItemId[item.id] += 1;
-        }
+      return ids.reduce(
+        (acc, id) => {
+          if (!state.itemIds.includes(id)) {
+            acc.itemIds.push(id);
+            acc.quantityByItemId[id] = (acc.quantityByItemId[id] || 0) + 1;
+          }
 
-        return acc;
-      }, state);
+          return acc;
+        },
+        { ...state }
+      );
     }
 
     case actionTypes.REMOVE_MULTIPLE_FROM_CART: {
       const { ids } = action.payload;
 
-      return ids.reduce((acc, id) => {
-        if (state.itemIds.includes(id)) {
-          acc.itemsIds = acc.itemIds.filter(itemId => id !== itemId);
+      return ids.reduce(
+        (acc, id) => {
+          if (state.itemIds.includes(id)) {
+            acc.itemsIds = acc.itemIds.filter(itemId => id !== itemId);
 
-          const { id, temp } = acc.quantityByItemId;
-          acc.quantityByItemId = temp;
-        }
+            const { id, temp } = acc.quantityByItemId;
+            acc.quantityByItemId = temp;
+          }
 
-        return acc;
-      }, state);
+          return acc;
+        },
+        { ...state }
+      );
     }
 
     case actionTypes.INCREMENT_QUANTITY_CART: {

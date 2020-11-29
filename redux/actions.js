@@ -44,7 +44,14 @@ export function toggleNightMode() {
 export function addToast(toast) {
   return {
     type: actionTypes.ADD_TOAST,
-    payload: { toast }
+    payload: {
+      toast: {
+        position: "bottom-right",
+        duration: 9000,
+        isClosable: true,
+        ...toast
+      }
+    }
   };
 }
 

@@ -13,8 +13,7 @@ export const actionTypes = {
 
   ADD_MULTIPLE_IN_CART: "ADD_MULTIPLE_IN_CART",
   REMOVE_MULTIPLE_FROM_CART: "REMOVE_MULTIPLE_FROM_CART",
-  INCREMENT_QUANTITY_CART: "INCREMENT_QUANTITY_CART",
-  DECREMENT_QUANTITY_CART: "DECREMENT_QUANTITY_CART",
+  SET_QUANTITY_CART: "SET_QUANTITY_CART",
 
   LOAD_MENU: "LOAD_MENU"
 };
@@ -112,12 +111,8 @@ export function removeMultipleFromCart(ids = []) {
   };
 }
 
-export function incrementQuantityInCart(id, step = 1) {
-  return { type: actionTypes.INCREMENT_QUANTITY_CART, payload: { id, step } };
-}
-
-export function decrementQuantityInCart(id, step = 1) {
-  return { type: actionTypes.DECREMENT_QUANTITY_CART, payload: { id, step } };
+export function setQuantityInCart(id, value) {
+  return { type: actionTypes.SET_QUANTITY_CART, payload: { id, value } };
 }
 
 export function loadMenu(items = []) {

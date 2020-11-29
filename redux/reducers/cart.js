@@ -41,23 +41,12 @@ export default function reducer(state = initialState, action) {
       );
     }
 
-    case actionTypes.INCREMENT_QUANTITY_CART: {
-      const { id, step } = action.payload;
+    case actionTypes.SET_QUANTITY_CART: {
+      const { id, value } = action.payload;
 
       const quantityByItemId = {
         ...state.quantityByItemId,
-        [id]: state.quantityByItemId[id] + step
-      };
-
-      return { ...state, quantityByItemId };
-    }
-
-    case actionTypes.DECREMENT_QUANTITY_CART: {
-      const { id, step } = action.payload;
-
-      const quantityByItemId = {
-        ...state.quantityByItemId,
-        [id]: Math.max(state.quantityByItemId[id] - step, 0)
+        [id]: value
       };
 
       return { ...state, quantityByItemId };

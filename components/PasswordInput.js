@@ -19,7 +19,7 @@ const PasswordInput = ({ onChange, ...restProps }) => {
 
       <InputRightElement width="3rem" height="full">
         <Button
-          h="1.8rem"
+          h="1.4rem"
           px={0}
           size="sm"
           fontSize="lg"

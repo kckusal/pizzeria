@@ -48,8 +48,8 @@ function Login() {
       dispatch(
         addToast({
           status: "error",
-          title: "Invalid data",
-          description: "Make sure you have provided valid email and password."
+          title: "Invalid Data",
+          description: "Please enter valid email & password."
         })
       );
     }

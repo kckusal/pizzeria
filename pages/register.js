@@ -134,12 +134,12 @@ function Register() {
                   if (!value) {
                     error = "First name is required.";
                   } else {
-                    if (!value.match(/^[a-z][a-z]*$/)) {
+                    if (!value.toLowerCase().match(/^[a-z][a-z]*$/)) {
                       error = "First name can contain only letters.";
                     }
                   }
 
-                  console.log(value, error);
+                  // console.log(value, error);
                   if (error) {
                     setError("firstName", error);
                   } else {
@@ -162,7 +162,7 @@ function Register() {
                   let error;
 
                   if (value.trim() !== "") {
-                    if (!value.match(/^[a-z][a-z]*$/)) {
+                    if (!value.toLowerCase().match(/^[a-z][a-z]*$/)) {
                       error = "Last name can contain only letters.";
                     }
                   }

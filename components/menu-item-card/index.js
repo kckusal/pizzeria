@@ -18,7 +18,7 @@ import { addMultipleInCart } from "redux/actions";
 function MenuItem({ data, horizontal = false, ...restProps }) {
   const dispatch = useDispatch();
 
-  const { id, title, type, image, price, currencyCode, discount } = data;
+  const { id, title, type, image, price } = data;
 
   const placeholderImageUrl = useSelector(
     state => state.constants.placeholderImageUrl
@@ -55,7 +55,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
         justify="center"
         align="center"
       >
-        {discount && (
+        {price.discountPercent && (
           <Flex
             position="absolute"
             top="0px"
@@ -72,7 +72,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
           >
             <strong>−</strong>
             <Flex ml="1px" mr="2px">
-              {discount}
+              {price.discountPercent}
             </Flex>
             %
           </Flex>
@@ -128,8 +128,8 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
           spacing={horizontal ? 2 : 4}
         >
           <Currency
-            value={price}
-            sourceCurrencyCode={currencyCode}
+            value={price.value}
+            sourceCurrencyCode={price.currencyCode}
             justify="center"
             fontSize="1.7rem"
             fontWeight="500"

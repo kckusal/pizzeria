@@ -5,7 +5,7 @@ const initialState = {
   placeholderImageUrl: "https://via.placeholder.com/150",
 
   deliveryCost: {
-    currency: "usd",
+    currencyCode: "usd",
     value: 20
   }
 };

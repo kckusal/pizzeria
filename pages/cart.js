@@ -29,7 +29,7 @@ import Currency from "components/currency";
 import { setQuantityInCart, removeMultipleFromCart } from "redux/actions";
 
 function CartTableRow(props) {
-  const { id, title, type, image, price, currencyCode } = props.data;
+  const { id, title, type, image, price } = props.data;
 
   const dispatch = useDispatch();
 
@@ -74,8 +74,8 @@ function CartTableRow(props) {
 
         <Flex align="center">
           <Currency
-            value={price}
-            sourceCurrencyCode={currencyCode}
+            value={price.value}
+            sourceCurrencyCode={price.currencyCode}
             fontWeight="bold"
             width="100px"
             justify="center"
@@ -106,8 +106,8 @@ function CartTableRow(props) {
           </Box>
 
           <Currency
-            value={quantity * price}
-            sourceCurrencyCode={currencyCode}
+            value={quantity * price.value}
+            sourceCurrencyCode={price.currencyCode}
             fontWeight="bold"
             width="100px"
             justify="center"
@@ -146,10 +146,10 @@ function CartTable({ setSubtotal, setSourceCurrencyCode }) {
         subtotal =
           Number(subtotal) +
           parseInt(cartQuantityByItemId[itemId]) *
-            Number(menuItemsById[itemId].price);
+            Number(menuItemsById[itemId].price.value);
 
         if (!currencyCode) {
-          currencyCode = menuItemsById[itemId].currencyCode;
+          currencyCode = menuItemsById[itemId].price.currencyCode;
         }
       });
     }
@@ -361,7 +361,7 @@ function Cart() {
                 </Heading>
                 <Currency
                   value={deliveryCost.value}
-                  sourceCurrencyCode={deliveryCost.currency}
+                  sourceCurrencyCode={deliveryCost.currencyCode}
                 />
               </Flex>
 

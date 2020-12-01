@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
+import axios from "axios";
 import {
   Stack,
   Flex,
@@ -17,16 +18,16 @@ import SEO from "components/seo";
 import MenuItemCard from "components/menu-item-card";
 import { loadMenu } from "redux/actions";
 
-export default function Home({ menu: { items } }) {
+export default function Home({ menu }) {
   const dispatch = useDispatch();
 
   const [listViewOn, setListViewOn] = useState(false);
 
   useEffect(() => {
-    if (items.length > 0) {
-      dispatch(loadMenu(items));
+    if (menu.length > 0) {
+      dispatch(loadMenu(menu));
     }
-  }, []);
+  }, [menu]);
 
   return (
     <AppContainer>
@@ -60,11 +61,15 @@ export default function Home({ menu: { items } }) {
           </ButtonGroup>
         </Flex>
 
-        <Wrap pt={8} spacing={8}>
-          {items.map((item, i) => (
+        <Wrap
+          pt={8}
+          spacing={12}
+          justify={listViewOn ? "center" : "flex-start"}
+        >
+          {menu.map(item => (
             <MenuItemCard
               as={WrapItem}
-              key={i}
+              key={item.id}
               data={item}
               horizontal={listViewOn}
             />
@@ -75,72 +80,19 @@ export default function Home({ menu: { items } }) {
   );
 }
 
-Home.getInitialProps = async () => {
-  return {
-    menu: {
-      items: [
-        {
-          id: 1,
-          title: "Sample Pizza Title",
-          type: "dominos",
-          image:
-            "https://oop2.pizzahut.ru/product_pics/small//4/f863041741c3f9ee037075aed8012aa3.png",
-          ingredients:
-            "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
-          price: "20",
-          currencyCode: "usd",
-          discount: 20
-        },
+export async function getServerSideProps() {
+  const props = { menu: [] };
 
-        {
-          id: 2,
-          title: "Sample Pizza Title",
-          type: "dominos",
-          image:
-            "https://oop2.pizzahut.ru/product_pics/small//4/d091ceb09c21e319a51cc8df10784dfb.png",
-          ingredients:
-            "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
-          price: "40",
-          currencyCode: "usd"
-        },
+  try {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/menu`;
+    const response = await axios.get(url);
 
-        {
-          id: 3,
-          title: "Sample Pizza Title",
-          type: "dominos",
-          image:
-            "https://oop2.pizzahut.ru/product_pics/small//4/07251fc98d3c680af6f65c672eccc26a.png",
-          ingredients:
-            "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
-          price: "25",
-          currencyCode: "usd",
-          discount: 50
-        },
+    if (response.data?.menu) props.menu = response.data.menu;
 
-        {
-          id: 4,
-          title: "Sample Pizza Title",
-          type: "dominos",
-          image:
-            "https://oop2.pizzahut.ru/product_pics/small//4/de184c7f73f381efcd5e79ef61ea7b95.png",
-          ingredients:
-            "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
-          price: "30",
-          currencyCode: "usd"
-        },
+    console.log(">> Menu items fetched server-side.");
+  } catch (err) {
+    console.log("Fetch Menu ERROR:", err.message);
+  }
 
-        {
-          id: 5,
-          title: "Sample Pizza Title",
-          type: "dominos",
-          image:
-            "https://oop2.pizzahut.ru/product_pics/small//4/065e0d76b81b09780c04e8ce95a423ad.png",
-          ingredients:
-            "Томатный соус, сыр Моцарелла, курица, грибы, сладкий перец, красный лук, маслины",
-          price: "28",
-          currencyCode: "usd"
-        }
-      ]
-    }
-  };
-};
+  return { props };
+}

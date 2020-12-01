@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import axios from "axios";
 import {
   Stack,
   Flex,
@@ -17,6 +16,8 @@ import AppContainer from "components/AppContainer";
 import SEO from "components/seo";
 import MenuItemCard from "components/menu-item-card";
 import { loadMenu } from "redux/actions";
+
+import { getMenuItems } from "pages/api/menu";
 
 export default function Home({ menu }) {
   const dispatch = useDispatch();
@@ -81,18 +82,5 @@ export default function Home({ menu }) {
 }
 
 export async function getServerSideProps() {
-  const props = { menu: [] };
-
-  try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/menu`;
-    const response = await axios.get(url);
-
-    if (response.data?.menu) props.menu = response.data.menu;
-
-    console.log(">> Menu items fetched server-side.");
-  } catch (err) {
-    console.log("Fetch Menu ERROR:", err.message);
-  }
-
-  return { props };
+  return { props: { menu: getMenuItems() } };
 }

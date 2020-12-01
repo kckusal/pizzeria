@@ -27,7 +27,11 @@ import Link from "components/Link";
 import AppContainer from "components/AppContainer";
 import Currency from "components/currency";
 import DetailedItemModalOnClick from "components/menu-item-card/DetailedModal";
-import { setQuantityInCart, removeMultipleFromCart } from "redux/actions";
+import {
+  setQuantityInCart,
+  removeMultipleFromCart,
+  addToast
+} from "redux/actions";
 
 function CartTableRow(props) {
   const { id, title, image, price } = props.data;
@@ -306,10 +310,29 @@ function CartPage() {
   const [subtotal, setSubtotal] = useState(0);
   const [sourceCurrencyCode, setSourceCurrencyCode] = useState(null);
 
+  const userData = useRef({ firstName: "", lastName: "", address: "" });
   const deliveryCost = useSelector(state => state.constants.deliveryCost);
 
   const handleCheckout = e => {
     e.preventDefault();
+
+    const { firstName, lastName, address } = userData.current;
+
+    if (firstName && address) {
+      dispatch(
+        addToast({
+          status: "success",
+          description: "Your order has been received to be processed shortly."
+        })
+      );
+    } else {
+      dispatch(
+        addToast({
+          status: "error",
+          description: "Please enter a name & address for the order."
+        })
+      );
+    }
   };
 
   return (
@@ -363,7 +386,7 @@ function CartPage() {
         {subtotal > 0 && (
           <Stack
             as="form"
-            noValidate
+            noValidate={false}
             onSubmit={handleCheckout}
             width="full"
             maxWidth="500px"
@@ -382,7 +405,11 @@ function CartPage() {
               Checkout
             </Heading>
 
-            <CheckoutOrderForm />
+            <CheckoutOrderForm
+              setUserData={data => {
+                userData.current = data;
+              }}
+            />
 
             <Stack spacing={3} fontSize="" height="full">
               <Flex justify="space-between">

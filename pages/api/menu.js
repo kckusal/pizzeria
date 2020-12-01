@@ -1,7 +1,10 @@
 const fs = require("fs");
+const path = require("path");
+
+const menuFileDir = path.join(process.cwd(), "data/menu.json");
 
 export function getMenuItems() {
-  const rawData = fs.readFileSync("data/menu.json");
+  const rawData = fs.readFileSync(menuFileDir);
   return JSON.parse(rawData);
 }
 

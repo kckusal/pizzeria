@@ -1,7 +1,8 @@
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 
-function login({ email, password }) {
+function login(email, password) {
+  console.log("log", email, password);
   let error, user;
 
   if (!email || !password) {
@@ -34,10 +35,11 @@ function login({ email, password }) {
 }
 
 export default (req, res) => {
-  console.log(`[Login request]: ${JSON.stringify(req.body)}`);
+  console.log(`[Login request]: `, req);
 
   if (req.method === "POST") {
-    const { error, user } = login(req.body);
+    console.log("will check login now.");
+    const { error, user } = login(req.body?.email, req.body?.password);
 
     console.log(`[Login Result]: ${error} || ${user}`);
 

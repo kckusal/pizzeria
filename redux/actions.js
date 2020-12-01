@@ -99,7 +99,7 @@ export function addMultipleInCart(itemIds) {
   };
 }
 
-export function removeMultipleFromCart(ids = []) {
+export function removeMultipleFromCart(ids = null) {
   return {
     type: actionTypes.REMOVE_MULTIPLE_FROM_CART,
     payload: {
@@ -107,8 +107,8 @@ export function removeMultipleFromCart(ids = []) {
       toast: {
         status: "warning",
         title: "Removed from cart!",
-        description: `You have removed ${ids.length} item${
-          ids.length > 1 ? "s" : ""
+        description: `You have removed ${ids ? ids.length : "all"} item${
+          ids ? (ids.length > 1 ? "s" : "") : "s"
         } from cart.`,
         isClosable: true,
         duration: 9000,

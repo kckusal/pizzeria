@@ -70,7 +70,10 @@ export default function reducer(state = initialState, action) {
       if (!state.currency.currentCode && items.length > 0) {
         return {
           ...state,
-          currency: { ...state.currency, currentCode: items[0].currencyCode }
+          currency: {
+            ...state.currency,
+            currentCode: items[0].price.currencyCode
+          }
         };
       }
 

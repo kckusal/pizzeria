@@ -17,7 +17,22 @@ export default function AppToasts() {
       if (name) {
         audioRef.current.src = `sounds/${name}.mp3`;
       }
-      audioRef.current.play();
+
+      // Show loading animation.
+      const playPromise = audioRef.current.play();
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(_ => {
+            // Automatic playback started!
+            // Show playing UI.
+          })
+          .catch(error => {
+            // Auto-play was prevented
+            // Show paused UI.
+            console.log("Play notification sound paused by error: " + error);
+          });
+      }
     }
   };
 

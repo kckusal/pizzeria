@@ -25,7 +25,7 @@ function Currency({
   return (
     <Flex align="center" {...restProps}>
       {!noPrefix && (
-        <Box as="span" mr={1} fontWeight="500">
+        <Box as="span" mr={1} fontWeight="500" transform="scale(0.9)">
           {prefix}
         </Box>
       )}
@@ -37,7 +37,7 @@ function Currency({
       />
 
       {!noSuffix && (
-        <Box as="span" ml={1}>
+        <Box as="span" ml={1} transform="scale(0.8)">
           {suffix}
         </Box>
       )}

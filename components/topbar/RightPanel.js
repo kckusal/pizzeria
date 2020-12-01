@@ -104,7 +104,9 @@ function RightPanel() {
 
         <Stack spacing="-2px" fontSize="0.8rem" ml={1}>
           <Flex fontWeight="500">You're a guest.</Flex>
-          {pathname !== "/login" && <Flex>Click to log in.</Flex>}
+          {typeof window !== "undefined" && pathname !== "/login" && (
+            <Flex>Click to log in.</Flex>
+          )}
         </Stack>
       </TopbarButton>
     </Flex>

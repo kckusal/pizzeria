@@ -4,10 +4,10 @@ import Link from "components/Link";
 
 function LeftPanel() {
   return (
-    <Flex width="full" height="full" align="center">
-      <Heading as="h1" fontSize="3xl">
-        <Link href="/">Pizzeria</Link>
-      </Heading>
+    <Flex width="full" height="full" align="stretch" pt="1px" pb="2px">
+      <Flex as={Link} fontSize="3xl" fontWeight="600" href="/">
+        Pizzeria
+      </Flex>
     </Flex>
   );
 }

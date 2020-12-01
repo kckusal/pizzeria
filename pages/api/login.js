@@ -54,5 +54,5 @@ export default (req, res) => {
     }
   }
 
-  res.status(204);
+  return res.status(204);
 };

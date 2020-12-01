@@ -26,6 +26,10 @@ export default function reducer(state = initialState, action) {
     case actionTypes.REMOVE_MULTIPLE_FROM_CART: {
       const { ids } = action.payload;
 
+      if (!ids) {
+        return initialState;
+      }
+
       return state.itemIds.reduce(
         (acc, existingItemId) => {
           if (!ids.includes(existingItemId)) {

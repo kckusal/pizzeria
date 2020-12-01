@@ -1,5 +1,8 @@
 const fs = require("fs");
+const path = require("path");
 const bcrypt = require("bcrypt");
+
+const usersFileDir = path.join(process.cwd(), "data/users.json");
 
 function login(email, password) {
   console.log("log", email, password);
@@ -8,7 +11,7 @@ function login(email, password) {
   if (!email || !password) {
     error = "Invalid email or password provided.";
   } else {
-    const rawData = fs.readFileSync("data/users.json");
+    const rawData = fs.readFileSync(usersFileDir);
     const users = JSON.parse(rawData);
 
     const targetUser = users.find(u => u.email === email);

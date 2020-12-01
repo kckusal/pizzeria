@@ -1,6 +1,10 @@
 const fs = require("fs");
+const path = require("path");
 const bcrypt = require("bcrypt");
+
 const saltRounds = 10;
+
+const usersFileDir = path.join(process.cwd(), "data/users.json");
 
 function addUser(user) {
   let error;
@@ -8,7 +12,7 @@ function addUser(user) {
   if (!user || !user.email || !user.password) {
     error = "Invalid data provided. Provide at least an email and a password.";
   } else {
-    const rawData = fs.readFileSync("data/users.json");
+    const rawData = fs.readFileSync(usersFileDir);
     const users = JSON.parse(rawData);
 
     const { password, firstName, lastName, email, address } = user;
@@ -23,7 +27,7 @@ function addUser(user) {
 
         // add user
         users.push({ firstName, lastName, email, address, passwordHash: hash });
-        fs.writeFileSync("data/users.json", JSON.stringify(users));
+        fs.writeFileSync(usersFileDir, JSON.stringify(users));
       } else {
         error = "Some error occurred while hashing password.";
       }

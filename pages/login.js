@@ -15,6 +15,7 @@ import EmailInput from "components/EmailInput";
 import PasswordInput from "components/PasswordInput";
 import Link from "components/Link";
 import { addToast } from "redux/actions";
+import { postData } from "utils/";
 
 function Login() {
   const dispatch = useDispatch();
@@ -33,26 +34,79 @@ function Login() {
     setErrors({ ...errors, [key]: error });
   };
 
-  const handleSubmit = e => {
+  const login = async (email, password) => {
+    let toast;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/login`;
+
+    postData(url, { email, password })
+      .then(response => {
+        console.log("DATA", url, response);
+
+        if (response.status === 200) {
+          toast = {
+            status: "success",
+            title: "Login successful.",
+            description: response.data.message
+          };
+        } else {
+          toast = {
+            status: "error",
+            title: "Login Failed.",
+            description:
+              response.data?.message || "Some error occurred. Try later!"
+          };
+        }
+      })
+      .catch(err => {
+        console.log("ERR", url, err);
+
+        toast = {
+          status: "error",
+          title: "Login Failed",
+          description:
+            err.response?.data ||
+            err?.message ||
+            "Some error occurred. Try later!"
+        };
+      })
+      .finally(() => {
+        if (toast) {
+          dispatch(addToast(toast));
+        }
+      });
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
 
-    if (data.current.email && data.current.password) {
-      dispatch(
-        addToast({
-          status: "success",
-          title: "Login successful.",
-          description: "Login will proceed now."
-        })
-      );
+    if (!data.current.email) {
+      setError("email", "Email is required.");
     } else {
-      dispatch(
-        addToast({
-          status: "error",
-          title: "Invalid Data",
-          description: "Please enter valid email & password."
-        })
-      );
+      if (!data.current.password) {
+        setError("password", "Password is required.");
+      } else {
+        // there's email and password, so continue
+        dispatch(
+          addToast({
+            status: "info",
+            title: "Fetching Login...",
+            description: "Request sent to the server."
+          })
+        );
+
+        await login(data.current.email, data.current.password);
+
+        return;
+      }
     }
+
+    dispatch(
+      addToast({
+        status: "error",
+        title: "Invalid Data",
+        description: "Please enter valid email & password."
+      })
+    );
   };
 
   return (
@@ -112,7 +166,7 @@ function Login() {
           </FormControl>
 
           <Link
-            href="#"
+            href="/login#"
             mb={1}
             colorScheme="blue"
             onClick={e => {

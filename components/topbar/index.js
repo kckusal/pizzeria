@@ -1,8 +1,13 @@
+import dynamic from "next/dynamic";
+
 import { Flex } from "@chakra-ui/react";
 
 import AppContainer from "components/AppContainer";
 import LeftPanel from "./LeftPanel";
-import RightPanel from "./RightPanel";
+
+const RightPanelWithNoSSR = dynamic(() => import("./RightPanel"), {
+  ssr: false
+});
 
 function Topbar() {
   return (
@@ -22,7 +27,7 @@ function Topbar() {
         maxWidth={900}
       >
         <LeftPanel />
-        <RightPanel />
+        <RightPanelWithNoSSR />
       </AppContainer>
     </Flex>
   );

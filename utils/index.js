@@ -30,3 +30,19 @@ export async function postData(url = "", data = {}) {
 
   return response.json(); // parses JSON response into native JavaScript objects
 }
+
+export class HttpResponseError extends Error {
+  constructor(statusCode = "500", message = "Internal Server Error", ...rest) {
+    super(rest);
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, HttpResponseError);
+    }
+
+    // Custom debugging information
+    this.code = statusCode;
+    this.message = message;
+    this.date = new Date();
+  }
+}

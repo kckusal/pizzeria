@@ -10,15 +10,36 @@ import {
   Button
 } from "@chakra-ui/react";
 
+import useUser from "redux/hooks/user";
 import AppContainer from "components/AppContainer";
 import EmailInput from "components/EmailInput";
 import PasswordInput from "components/PasswordInput";
 import Link from "components/Link";
 import { addToast } from "redux/actions";
-import { postData } from "utils/";
+
+function LoginButton() {
+  const { authInProgress } = useUser();
+
+  return (
+    <Button
+      type="submit"
+      isDisabled={authInProgress}
+      isLoading={authInProgress}
+      loadingText="Authenticating"
+      colorScheme="primary"
+      width="full"
+      maxWidth="200px"
+      alignSelf="center"
+      mb={4}
+    >
+      Login
+    </Button>
+  );
+}
 
 function Login() {
   const dispatch = useDispatch();
+  const { login } = useUser();
 
   const data = useRef({
     email: "",
@@ -34,79 +55,29 @@ function Login() {
     setErrors({ ...errors, [key]: error });
   };
 
-  const login = async (email, password) => {
-    let toast;
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/login`;
-
-    postData(url, { email, password })
-      .then(response => {
-        console.log("DATA", url, response);
-
-        if (response.status === 200) {
-          toast = {
-            status: "success",
-            title: "Login successful.",
-            description: response.data.message
-          };
-        } else {
-          toast = {
-            status: "error",
-            title: "Login Failed.",
-            description:
-              response.data?.message || "Some error occurred. Try later!"
-          };
-        }
-      })
-      .catch(err => {
-        console.log("ERR", url, err);
-
-        toast = {
-          status: "error",
-          title: "Login Failed",
-          description:
-            err.response?.data ||
-            err?.message ||
-            "Some error occurred. Try later!"
-        };
-      })
-      .finally(() => {
-        if (toast) {
-          dispatch(addToast(toast));
-        }
-      });
-  };
-
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!data.current.email) {
-      setError("email", "Email is required.");
-    } else {
+    if (!data.current.email || !data.current.password) {
+      if (!data.current.email) {
+        setError("email", "Email is required.");
+      }
       if (!data.current.password) {
         setError("password", "Password is required.");
-      } else {
-        // there's email and password, so continue
-        dispatch(
-          addToast({
-            status: "info",
-            title: "Fetching Login...",
-            description: "Request sent to the server."
-          })
-        );
-
-        await login(data.current.email, data.current.password);
-
-        return;
       }
-    }
 
-    dispatch(
-      addToast({
-        status: "error",
-        title: "Invalid Data",
-        description: "Please enter valid email & password."
-      })
-    );
+      dispatch(
+        addToast({
+          status: "error",
+          title: "Form data invalid.",
+          description: "Please fill all login fields properly first."
+        })
+      );
+    } else {
+      setErrors({ email: "", password: "" });
+      // there's email and password, so continue
+      await login(data.current.email, data.current.password);
+    }
   };
 
   return (
@@ -154,6 +125,7 @@ function Login() {
             <PasswordInput
               id="password"
               onChange={value => {
+                data.current.password = "";
                 if (value.trim() === "") {
                   setError("password", "Password is required.");
                 } else {
@@ -184,16 +156,7 @@ function Login() {
             Forgot Password ?
           </Link>
 
-          <Button
-            type="submit"
-            colorScheme="primary"
-            width="full"
-            maxWidth="200px"
-            alignSelf="center"
-            mb={4}
-          >
-            Login
-          </Button>
+          <LoginButton />
         </Stack>
 
         <Link href="/register" mt="0" color="blue.500">

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Head from "next/head";
 import { DefaultSeo } from "next-seo";
 import Router from "next/router";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import NProgress from "nprogress";
 import { Stack, Flex, Box } from "@chakra-ui/react";
@@ -17,7 +17,7 @@ import "styles/globals.css";
 import "styles/nprogress.css";
 
 function MyApp({ Component, pageProps }) {
-  const dispatch = useDispatch();
+  const authenticated = useSelector(state => state.user.authenticated);
 
   useEffect(() => {
     NProgress.configure({ minimum: 0.1, showSpinner: false });
@@ -28,6 +28,14 @@ function MyApp({ Component, pageProps }) {
     Router.events.on("routeChangeError", () => NProgress.done());
     Router.events.on("routeChangeComplete", () => NProgress.done());
   }, []);
+
+  useEffect(() => {
+    if (authenticated) {
+      if (["/login", "/register"].includes(Router.pathname)) {
+        Router.push("/");
+      }
+    }
+  }, [authenticated]);
 
   return (
     <AppProvider>

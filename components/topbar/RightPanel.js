@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { useSelector, useDispatch } from "react-redux";
 
 import {
   Flex,
@@ -8,13 +7,18 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem
+  MenuItem,
+  IconButton
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
+import { FaHistory } from "react-icons/fa";
 import { BiUserCircle } from "react-icons/bi";
+import { GrHistory } from "react-icons/gr";
 
+import useAppSettings from "redux/hooks/app";
+import useUser from "redux/hooks/user";
+import useCart from "redux/hooks/cart";
 import Link from "components/Link";
-import { changeCurrency } from "redux/actions";
 
 function TopbarButton({ children, ...rest }) {
   return (
@@ -33,22 +37,37 @@ function TopbarButton({ children, ...rest }) {
   );
 }
 
-function RightPanel() {
-  const dispatch = useDispatch();
+function UserPart() {
+  const { authenticated, data: userData } = useUser();
   const { pathname } = useRouter();
 
-  const currency = useSelector(state => state.app.currency);
-  const cartItemsCount = useSelector(state => state.cart.itemIds.length);
+  return (
+    <TopbarButton px={2} as={Link} href={authenticated ? "/logout" : "/login"}>
+      <BiUserCircle size="25" />
 
-  const onChangeCurrency = code => {
-    if (currency.currentCode !== code) {
-      dispatch(changeCurrency(code));
-    }
-  };
+      <Stack spacing="-2px" fontSize="0.8rem" ml={1} width="90px" isTruncated>
+        <Box fontWeight="500" width="90px" isTruncated>
+          {authenticated ? `${userData.email}` : "You're a guest."}
+        </Box>
+        {typeof window !== "undefined" &&
+          !["/login", "/logout"].includes(pathname) && (
+            <Flex>Click to log {authenticated ? "out" : "in"}.</Flex>
+          )}
+      </Stack>
+    </TopbarButton>
+  );
+}
+
+function RightPanel() {
+  const { pathname } = useRouter();
+
+  const { currency, changeCurrency } = useAppSettings();
+  const { count } = useCart();
+  const { authenticated } = useUser();
 
   return (
     <Flex width="full" height="full" justify="flex-end" align="stretch">
-      {!["/login", "/register"].includes(pathname) && currency.currentCode && (
+      {!["/login", "/register"].includes(pathname) && (
         <Menu isLazy arrowSize={4}>
           <TopbarButton>
             <MenuButton
@@ -65,7 +84,7 @@ function RightPanel() {
             {currency.allCodes.map(code => {
               const { label, symbol } = currency.optionsByCode[code];
               return (
-                <MenuItem key={code} onClick={() => onChangeCurrency(code)}>
+                <MenuItem key={code} onClick={() => changeCurrency(code)}>
                   {label} - {symbol}
                 </MenuItem>
               );
@@ -92,23 +111,23 @@ function RightPanel() {
             justify="center"
             align="center"
           >
-            {cartItemsCount}
+            {count}
           </Flex>
 
           <FiShoppingCart />
         </Box>
       </TopbarButton>
 
-      <TopbarButton px={2} as={Link} href="/login">
-        <BiUserCircle size="25" />
+      {authenticated && (
+        <TopbarButton as={Link} href="/orders" width="50px">
+          <Stack spacing="0" fontSize="xs" align="center" pt={1}>
+            <FaHistory size={18} />
+            <Flex>Orders</Flex>
+          </Stack>
+        </TopbarButton>
+      )}
 
-        <Stack spacing="-2px" fontSize="0.8rem" ml={1}>
-          <Flex fontWeight="500">You're a guest.</Flex>
-          {typeof window !== "undefined" && pathname !== "/login" && (
-            <Flex>Click to log in.</Flex>
-          )}
-        </Stack>
-      </TopbarButton>
+      <UserPart />
     </Flex>
   );
 }

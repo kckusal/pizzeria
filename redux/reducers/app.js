@@ -4,7 +4,7 @@ const initialState = {
   darkMode: false,
 
   currency: {
-    currentCode: null,
+    currentCode: "usd",
     allCodes: ["usd", "eur", "rub"],
     optionsByCode: {
       usd: {
@@ -38,7 +38,18 @@ export default function reducer(state = initialState, action) {
   const newToast = action.payload?.toast;
 
   if (newToast) {
-    state = { ...state, toasts: [newToast, ...state.toasts] };
+    state = {
+      ...state,
+      toasts: [
+        {
+          position: "bottom-right",
+          duration: 9000,
+          isClosable: true,
+          ...newToast
+        },
+        ...state.toasts
+      ]
+    };
   }
 
   switch (action.type) {

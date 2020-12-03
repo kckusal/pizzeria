@@ -1,3 +1,4 @@
+/** TYPES */
 export const actionTypes = {
   HYDRATE: "HYDRATE",
 
@@ -7,16 +8,28 @@ export const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
   REMOVE_TOAST: "REMOVE_TOAST",
 
-  LOGIN_REQUESTED: "LOGIN_REQUESTED",
-  LOGIN_SUCCESSFUL: "LOGIN_SUCCESSFUL",
-  LOGOUT_SUCCESSFUL: "LOGOUT_SUCCESSFUL",
+  LOGIN_REQUEST: "LOGIN_REQUEST",
+  LOGIN_SUCCESS: "LOGIN_SUCCESS",
+  LOGIN_FAILURE: "LOGIN_FAILURE",
+  LOGOUT_SUCCESS: "LOGOUT_SUCCESS",
 
-  ADD_MULTIPLE_IN_CART: "ADD_MULTIPLE_IN_CART",
-  REMOVE_MULTIPLE_FROM_CART: "REMOVE_MULTIPLE_FROM_CART",
-  SET_QUANTITY_CART: "SET_QUANTITY_CART",
+  REGISTER_REQUEST: "REGISTER_REQUEST",
+  REGISTER_SUCCESS: "REGISTER_SUCCESS",
+  REGISTER_FAILURE: "REGISTER_FAILURE",
 
-  LOAD_MENU: "LOAD_MENU"
+  SAVE_CART_REQUEST: "SAVE_CART_REQUEST",
+  SAVE_CART_SUCCESS: "SAVE_CART_SUCCESS",
+  SAVE_CART_FAILURE: "SAVE_CART_FAILURE",
+
+  LOAD_MENU_REQUEST: "LOAD_MENU_REQUEST",
+  LOAD_MENU_SUCCESS: "LOAD_MENU_SUCCESS",
+  LOAD_MENU_FAILURE: "LOAD_MENU_FAILURE",
+
+  CHECKOUT_SUCCESS: "CHECKOUT_SUCCESS",
+  CHECKOUT_FAILURE: "CHECKOUT_FAILURE"
 };
+
+/** ACTION CREATORS */
 
 export function changeCurrency(code) {
   return {
@@ -26,10 +39,7 @@ export function changeCurrency(code) {
       toast: {
         status: "info",
         title: "Currency changed!",
-        description: `You are viewing the prices in ${code.toUpperCase()} now.`,
-        isClosable: true,
-        duration: 9000,
-        position: "bottom-right"
+        description: `You are viewing the prices in ${code.toUpperCase()} now.`
       }
     }
   };
@@ -45,12 +55,7 @@ export function addToast(toast) {
   return {
     type: actionTypes.ADD_TOAST,
     payload: {
-      toast: {
-        position: "bottom-right",
-        duration: 9000,
-        isClosable: true,
-        ...toast
-      }
+      toast
     }
   };
 }
@@ -60,68 +65,77 @@ export function removeToast(toastId = null) {
 }
 
 export function loginRequested() {
-  return { type: actionTypes.LOGIN_REQUESTED };
+  return { type: actionTypes.LOGIN_REQUEST };
 }
 
-export function loginSuccessful(user = null) {
+export function loginSucceeded(user = null, toast) {
   return {
-    type: actionTypes.LOGIN_SUCCESSFUL,
+    type: actionTypes.LOGIN_SUCCESS,
     payload: {
       user,
-      toast: {
-        status: "success",
-        title: "Logged in!",
-        description: `Hello. You can now make orders.`,
-        isClosable: true,
-        duration: 9000,
-        position: "bottom-right"
-      }
+      toast
     }
   };
 }
 
-export function addMultipleInCart(itemIds) {
+export function loginFailed(toast) {
+  return { type: actionTypes.LOGIN_FAILURE, payload: { toast } };
+}
+
+export function logoutSucceeded(toast) {
   return {
-    type: actionTypes.ADD_MULTIPLE_IN_CART,
+    type: actionTypes.LOGOUT_SUCCESS,
     payload: {
-      ids: itemIds,
-      toast: {
-        status: "success",
-        title: "Added to cart!",
-        description: `You have added ${itemIds.length} item${
-          itemIds.length > 1 ? "s" : ""
-        } to cart.`,
-        isClosable: true,
-        duration: 9000,
-        position: "bottom-right"
-      }
+      toast
     }
   };
 }
 
-export function removeMultipleFromCart(ids = null) {
+export function registerRequested() {
+  return { type: actionTypes.REGISTER_REQUEST };
+}
+
+export function registerSucceeded(user, toast) {
+  return { type: actionTypes.REGISTER_SUCCESS, payload: { user, toast } };
+}
+
+export function registerFailed(toast) {
+  return { type: actionTypes.REGISTER_FAILURE, payload: { toast } };
+}
+
+export function saveCartSucceeded(cart, toast) {
   return {
-    type: actionTypes.REMOVE_MULTIPLE_FROM_CART,
+    type: actionTypes.SAVE_CART_SUCCESS,
     payload: {
-      ids,
-      toast: {
-        status: "warning",
-        title: "Removed from cart!",
-        description: `You have removed ${ids ? ids.length : "all"} item${
-          ids ? (ids.length > 1 ? "s" : "") : "s"
-        } from cart.`,
-        isClosable: true,
-        duration: 9000,
-        position: "bottom-right"
-      }
+      cart,
+      toast
     }
   };
 }
 
-export function setQuantityInCart(id, value) {
-  return { type: actionTypes.SET_QUANTITY_CART, payload: { id, value } };
+export function saveCartFailed(toast) {
+  return {
+    type: actionTypes.SAVE_CART_FAILURE,
+    payload: {
+      toast
+    }
+  };
 }
 
-export function loadMenu(items = []) {
-  return { type: actionTypes.LOAD_MENU, payload: { items } };
+export function loadMenuSucceeded(items = []) {
+  return { type: actionTypes.LOAD_MENU_SUCCESS, payload: { items } };
+}
+
+export function checkoutSucceeded(order, toast) {
+  return {
+    type: actionTypes.CHECKOUT_SUCCESS,
+    payload: { order, toast }
+  };
+}
+
+export function checkoutFailed(toast) {
+  return {
+    type: actionTypes.CHECKOUT_FAILURE,
+    payload: { toast }
+  };
 }

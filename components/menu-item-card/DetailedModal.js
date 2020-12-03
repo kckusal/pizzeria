@@ -18,6 +18,7 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 
+import useMenu from "redux/hooks/menu";
 import AddToCartButton from "./AddToCartButton";
 import Currency from "components/currency";
 
@@ -27,7 +28,9 @@ function DetailedModalOnClick({ id, children }) {
   const placeholderImageUrl = useSelector(
     state => state.constants.placeholderImageUrl
   );
-  const item = useSelector(state => state.menu.itemsById[id]);
+
+  const { itemsById } = useMenu();
+  const item = itemsById[id];
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   Stack,
@@ -15,7 +15,8 @@ import { BsListTask, BsGrid } from "react-icons/bs";
 import AppContainer from "components/AppContainer";
 import SEO from "components/seo";
 import MenuItemCard from "components/menu-item-card";
-import { loadMenu } from "redux/actions";
+import WithNoSSR from "components/WithNoSSR";
+import { loadMenuSucceeded } from "redux/actions";
 
 import { getMenuItems } from "pages/api/menu";
 
@@ -23,10 +24,11 @@ export default function Home({ menu }) {
   const dispatch = useDispatch();
 
   const [listViewOn, setListViewOn] = useState(false);
+  const menuUpdatedAt = useSelector(state => state.menu.updatedAt);
 
   useEffect(() => {
     if (menu.length > 0) {
-      dispatch(loadMenu(menu));
+      dispatch(loadMenuSucceeded(menu));
     }
   }, [menu]);
 
@@ -38,9 +40,17 @@ export default function Home({ menu }) {
       />
 
       <Stack width="full" height="full" py={8}>
-        <Heading as="h1" fontSize="2xl" textAlign="center">
-          Today's Menu
-        </Heading>
+        <Stack>
+          <Heading as="h1" fontSize="2xl" textAlign="center">
+            Today's Menu
+          </Heading>
+          <Flex fontSize="0.9rem" justify="center">
+            Last updated at{" "}
+            <WithNoSSR>
+              {menuUpdatedAt && new Date(menuUpdatedAt).toLocaleString()}
+            </WithNoSSR>
+          </Flex>
+        </Stack>
 
         <Flex pt={2}>
           ** All the shown prices are discounts- and VAT- inclusive.
@@ -63,18 +73,21 @@ export default function Home({ menu }) {
         </Flex>
 
         <Wrap
+          width="auto"
+          mx="auto"
           pt={8}
           spacing={12}
           justify={listViewOn ? "center" : "flex-start"}
         >
-          {menu.map(item => (
-            <MenuItemCard
-              as={WrapItem}
-              key={item.id}
-              data={item}
-              horizontal={listViewOn}
-            />
-          ))}
+          {menu &&
+            menu.map(item => (
+              <MenuItemCard
+                as={WrapItem}
+                key={item._id}
+                data={item}
+                horizontal={listViewOn}
+              />
+            ))}
         </Wrap>
       </Stack>
     </AppContainer>
@@ -82,5 +95,7 @@ export default function Home({ menu }) {
 }
 
 export async function getServerSideProps() {
-  return { props: { menu: getMenuItems() } };
+  const menu = await getMenuItems();
+
+  return { props: { menu } };
 }

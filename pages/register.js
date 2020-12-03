@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
 
 import {
   Heading,
@@ -12,10 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { debounce } from "lodash";
 
+import useUser from "redux/hooks/user";
 import AppContainer from "components/AppContainer";
 import EmailInput from "components/EmailInput";
 import PasswordInput from "components/PasswordInput";
 import Link from "components/Link";
+import { addToast } from "redux/actions";
 
 function PasswordSet({ onChange = () => {}, ...rest }) {
   const password = useRef("");
@@ -74,6 +77,7 @@ function PasswordSet({ onChange = () => {}, ...rest }) {
 }
 
 function Register() {
+  const dispatch = useDispatch();
   const data = useRef({
     firstName: "",
     lastName: "",
@@ -89,12 +93,37 @@ function Register() {
     address: ""
   });
 
+  const { register } = useUser();
+
   const setError = (key, error) => {
     setErrors({ ...errors, [key]: error });
   };
 
   const handleSubmit = e => {
     e.preventDefault();
+
+    if (
+      errors.firstName ||
+      errors.lastName ||
+      errors.email ||
+      errors.address ||
+      !data.current.email ||
+      !data.current.password
+    ) {
+      dispatch(
+        addToast({
+          status: "error",
+          title: "Invalid Data",
+          description: "Please fill all required fields with valid data."
+        })
+      );
+
+      return;
+    } else {
+      register(data.current);
+    }
+
+    console.log(data.current, errors);
   };
 
   return (

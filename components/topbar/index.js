@@ -17,7 +17,7 @@ function Topbar() {
       top="0"
       bg="primary.400"
       color="gray.100"
-      zIndex="sticky"
+      zIndex="banner"
       boxShadow="4"
     >
       <AppContainer

@@ -18,35 +18,40 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Input
+  Input,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay
 } from "@chakra-ui/react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { debounce } from "lodash";
 
+import useAppSettings from "redux/hooks/app";
+import useCart from "redux/hooks/cart";
+import useUser from "redux/hooks/user";
 import Link from "components/Link";
 import AppContainer from "components/AppContainer";
 import Currency from "components/currency";
 import DetailedItemModalOnClick from "components/menu-item-card/DetailedModal";
-import {
-  setQuantityInCart,
-  removeMultipleFromCart,
-  addToast
-} from "redux/actions";
+import { addToast, checkoutFailed } from "redux/actions";
 
 function CartTableRow(props) {
-  const { id, title, image, price } = props.data;
-
-  const dispatch = useDispatch();
+  const { _id, title, image, price } = props.data;
 
   const placeholderImageUrl = useSelector(
     state => state.constants.placeholderImageUrl
   );
 
-  const quantity = useSelector(state => state.cart.quantityByItemId[id]);
+  const { getQuantity, setQuantity, removeFromCart } = useCart();
+  const quantity = getQuantity(_id);
 
-  const handleQuantityChange = (_, valueAsNum) => {
-    dispatch(setQuantityInCart(id, valueAsNum));
-  };
+  const handleQuantityChange = debounce((_, valueAsNum) => {
+    setQuantity(_id, valueAsNum);
+  }, 1000);
 
   return (
     <Flex
@@ -61,7 +66,7 @@ function CartTableRow(props) {
       _hover={{ boxShadow: 1 }}
       zIndex="0"
     >
-      <DetailedItemModalOnClick id={id}>
+      <DetailedItemModalOnClick id={_id}>
         <Flex align="center" justify="center" overflow="hidden">
           <Image
             src={image}
@@ -77,7 +82,7 @@ function CartTableRow(props) {
       </DetailedItemModalOnClick>
 
       <Stack width="full" px={3} py={2}>
-        <DetailedItemModalOnClick id={id}>
+        <DetailedItemModalOnClick id={_id}>
           <Flex fontSize="1.1rem">{title}</Flex>
         </DetailedItemModalOnClick>
 
@@ -131,7 +136,7 @@ function CartTableRow(props) {
           variant="ghost"
           fontSize="2xl"
           onClick={() => {
-            dispatch(removeMultipleFromCart([id]));
+            removeFromCart(_id);
           }}
         />
       </Tooltip>
@@ -140,22 +145,19 @@ function CartTableRow(props) {
 }
 
 function CartTable({ setSubtotal, setSourceCurrencyCode }) {
-  const cartItemIds = useSelector(state => state.cart.itemIds);
-  const cartQuantityByItemId = useSelector(
-    state => state.cart.quantityByItemId
-  );
+  const { cart, itemIds, count } = useCart();
+
   const menuItemsById = useSelector(state => state.menu.itemsById);
 
   useEffect(() => {
     let subtotal = 0;
     let currencyCode = "";
 
-    if (cartItemIds.length > 0 && menuItemsById) {
-      cartItemIds.forEach(itemId => {
+    if (count > 0 && menuItemsById) {
+      itemIds.forEach(itemId => {
         subtotal =
           Number(subtotal) +
-          parseInt(cartQuantityByItemId[itemId]) *
-            Number(menuItemsById[itemId].price.value);
+          parseInt(cart[itemId]) * Number(menuItemsById[itemId].price.value);
 
         if (!currencyCode) {
           currencyCode = menuItemsById[itemId].price.currencyCode;
@@ -165,15 +167,15 @@ function CartTable({ setSubtotal, setSourceCurrencyCode }) {
 
     setSubtotal(subtotal);
     setSourceCurrencyCode(currencyCode);
-  }, [cartQuantityByItemId]);
+  }, [cart]);
 
   return (
-    <Stack spacing={5}>
-      {cartItemIds.map(itemId => (
+    <Stack minHeight="100vh" width="500px" spacing={5} mt={6}>
+      {itemIds.map(itemId => (
         <CartTableRow key={itemId} data={menuItemsById[itemId]} />
       ))}
 
-      {cartItemIds.length === 0 && (
+      {count === 0 && (
         <>
           <Flex align="center" wrap="wrap" fontSize="xl">
             No items added in cart yet.
@@ -196,7 +198,12 @@ function CartTable({ setSubtotal, setSourceCurrencyCode }) {
 }
 
 function CheckoutOrderForm({ setUserData = () => {} }) {
-  const data = useRef({ firstName: "", lastName: "", address: "" });
+  const { authenticated, data: authUser } = useUser();
+  const data = useRef({
+    firstName: authUser?.firstName || "",
+    lastName: authUser?.lastName || "",
+    address: authUser?.address || ""
+  });
 
   const [errors, setErrors] = useState({
     firstName: "",
@@ -209,15 +216,17 @@ function CheckoutOrderForm({ setUserData = () => {} }) {
   };
 
   useEffect(() => {
-    if (errors.firstName || errors.lastName || errors.address) {
-      return;
-    }
+    console.log("Checkout order form error", errors);
 
-    setUserData(data.current);
+    if (errors.firstName || errors.lastName || errors.address) {
+      setUserData({ firstName: "", lastName: "", address: "" });
+    } else {
+      setUserData(data.current);
+    }
   }, [errors]);
 
   return (
-    <Stack>
+    <Stack width="full">
       <Flex>
         <FormControl isRequired isInvalid={errors.firstName} pr={2}>
           <FormLabel htmlFor="firstName">First Name</FormLabel>
@@ -225,6 +234,7 @@ function CheckoutOrderForm({ setUserData = () => {} }) {
             type="text"
             id="firstName"
             placeholder="John"
+            defaultValue={authenticated ? authUser?.firstName : ""}
             onChange={debounce(e => {
               const value = String(e.target.value);
               let error;
@@ -254,6 +264,7 @@ function CheckoutOrderForm({ setUserData = () => {} }) {
             type="text"
             id="lastName"
             placeholder="Doe"
+            defaultValue={authenticated ? authUser?.lastName : ""}
             onChange={debounce(e => {
               const value = String(e.target.value);
               let error;
@@ -282,6 +293,7 @@ function CheckoutOrderForm({ setUserData = () => {} }) {
           type="text"
           id="address"
           placeholder="221B Baker Street"
+          defaultValue={authenticated ? authUser?.address : ""}
           onChange={debounce(e => {
             const value = String(e.target.value);
             let error;
@@ -304,14 +316,66 @@ function CheckoutOrderForm({ setUserData = () => {} }) {
   );
 }
 
+function ClearCartButton() {
+  const { clearCart } = useCart();
+  const cancelRef = useRef();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <>
+      <Button size="sm" variant="outline" colorScheme="red" onClick={onOpen}>
+        Clear Cart
+      </Button>
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        preserveScrollBarGap
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Clear Cart
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? This will remove all items from cart.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  clearCart();
+                  onClose();
+                }}
+                ml={3}
+              >
+                Yes, remove all cart items.
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
+  );
+}
+
 function CartPage() {
   const dispatch = useDispatch();
 
+  const { currency, convertCurrency } = useAppSettings();
+  const { checkout } = useCart();
+  const deliveryCost = useSelector(state => state.constants.deliveryCost);
+
   const [subtotal, setSubtotal] = useState(0);
   const [sourceCurrencyCode, setSourceCurrencyCode] = useState(null);
-
   const userData = useRef({ firstName: "", lastName: "", address: "" });
-  const deliveryCost = useSelector(state => state.constants.deliveryCost);
 
   const handleCheckout = e => {
     e.preventDefault();
@@ -319,12 +383,25 @@ function CartPage() {
     const { firstName, lastName, address } = userData.current;
 
     if (firstName && address) {
-      dispatch(
-        addToast({
-          status: "success",
-          description: "Your order has been received to be processed shortly."
-        })
+      console.log(userData.current);
+
+      const deliveryCostInUsd = Number(
+        convertCurrency(deliveryCost, "usd").value
       );
+      const totalCostInUsd =
+        Number(deliveryCostInUsd) +
+        parseFloat(
+          convertCurrency(
+            {
+              value: Number(subtotal),
+              currencyCode: sourceCurrencyCode
+            },
+            "usd"
+          ).value
+        );
+      console.log("TOtal cost", subtotal, totalCostInUsd);
+
+      checkout("usd", deliveryCostInUsd, totalCostInUsd);
     } else {
       dispatch(
         addToast({
@@ -337,122 +414,113 @@ function CartPage() {
 
   return (
     <AppContainer>
-      <Stack
-        direction={{ base: "column", md: "row" }}
-        width="full"
-        height="full"
-        minHeight="100vh"
-        align={{ base: "center", md: "flex-start" }}
-      >
-        <Stack width="full" py={8} pr={{ base: 0, md: 8 }}>
-          <Flex justify="space-between">
-            <Heading as="h1" fontSize="2xl" mb={3}>
-              Manage Cart Items
-            </Heading>
+      <Stack width="full" height="full" minHeight="100vh">
+        <Flex justify="space-between" pr={2} mt={8}>
+          <Heading as="h1" fontSize="2xl" mb={3}>
+            Manage Cart Items
+          </Heading>
 
-            {subtotal > 0 && (
-              <Button
-                size="sm"
-                variant="outline"
-                colorScheme="black"
-                onClick={() => {
-                  dispatch(removeMultipleFromCart());
-                }}
-              >
-                Clear Cart
-              </Button>
-            )}
+          {subtotal > 0 && <ClearCartButton />}
+        </Flex>
+        {subtotal > 0 && (
+          <Flex
+            as={Link}
+            href="/cart#checkout"
+            position="sticky"
+            top="50px"
+            py={2}
+            background="#eee"
+            zIndex="sticky"
+          >
+            Proceed to checkout? (show in mobile)
           </Flex>
-          {subtotal > 0 && (
-            <Flex
-              as={Link}
-              href="/cart#checkout"
-              position="sticky"
-              top="50px"
-              py={2}
-              background="#eee"
-              zIndex="sticky"
-            >
-              Proceed to checkout? (show in mobile)
-            </Flex>
-          )}
+        )}
 
+        <Flex
+          wrap="wrap"
+          align="flex-start"
+          position="sticky"
+          top="50px"
+          zIndex="sticky"
+        >
           <CartTable
             setSubtotal={setSubtotal}
             setSourceCurrencyCode={setSourceCurrencyCode}
           />
-        </Stack>
 
-        {subtotal > 0 && (
-          <Stack
-            as="form"
-            noValidate={false}
-            onSubmit={handleCheckout}
-            width="full"
-            maxWidth="500px"
-            minHeight="400px"
-            boxShadow="1"
-            position="sticky"
-            top="90px"
-            bg="white"
-            px={4}
-            py={6}
-            id="checkout"
-            ml={4}
-            spacing={4}
-          >
-            <Heading as="h2" fontSize="2xl" textAlign="center">
-              Checkout
-            </Heading>
+          {subtotal > 0 && (
+            <Stack
+              as="form"
+              noValidate={true}
+              onSubmit={handleCheckout}
+              width="full"
+              minWidth="340px"
+              maxWidth="350px"
+              minHeight="400px"
+              boxShadow="1"
+              position="sticky"
+              top="70px"
+              zIndex="sticky"
+              bg="white"
+              px={4}
+              py={6}
+              id="checkout"
+              ml={4}
+              spacing={4}
+            >
+              <Heading as="h2" fontSize="2xl" textAlign="center">
+                Checkout
+              </Heading>
 
-            <CheckoutOrderForm
-              setUserData={data => {
-                userData.current = data;
-              }}
-            />
+              <CheckoutOrderForm
+                setUserData={data => {
+                  userData.current = data;
+                }}
+              />
 
-            <Stack spacing={3} fontSize="" height="full">
-              <Flex justify="space-between">
-                <Heading as="h3" fontSize="md">
-                  Subtotal
-                </Heading>
-                <Currency
-                  value={subtotal}
-                  sourceCurrencyCode={sourceCurrencyCode}
-                />
-              </Flex>
+              <Stack spacing={3} fontSize="" height="full">
+                <Flex justify="space-between">
+                  <Heading as="h3" fontSize="md">
+                    Subtotal
+                  </Heading>
+                  <Currency
+                    value={subtotal}
+                    sourceCurrencyCode={sourceCurrencyCode}
+                  />
+                </Flex>
 
-              <Flex justify="space-between">
-                <Heading as="h3" fontSize="md">
-                  Delivery Fees
-                </Heading>
-                <Currency
-                  value={deliveryCost.value}
-                  sourceCurrencyCode={deliveryCost.currencyCode}
-                />
-              </Flex>
+                <Flex justify="space-between">
+                  <Heading as="h3" fontSize="md">
+                    Delivery Fees
+                  </Heading>
+                  <Currency
+                    value={deliveryCost.value}
+                    sourceCurrencyCode={deliveryCost.currencyCode}
+                  />
+                </Flex>
 
-              <Flex justify="space-between" mb={2}>
-                <Heading as="h3" fontSize="md">
-                  Total Cost
-                </Heading>
-                <Currency
-                  value={Number(deliveryCost.value) + Number(subtotal)}
-                  sourceCurrencyCode={sourceCurrencyCode}
-                />
-              </Flex>
+                <Flex justify="space-between" mb={2}>
+                  <Heading as="h3" fontSize="md">
+                    Total Cost
+                  </Heading>
+                  <Currency
+                    value={Number(deliveryCost.value) + Number(subtotal)}
+                    sourceCurrencyCode={sourceCurrencyCode}
+                  />
+                </Flex>
 
-              <Button
-                type="submit"
-                colorScheme="primary"
-                alignSelf="center"
-                width="150px"
-              >
-                Checkout Now
-              </Button>
+                <Button
+                  type="submit"
+                  colorScheme="primary"
+                  alignSelf="center"
+                  width="150px"
+                >
+                  Checkout Now
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        )}
+          )}
+        </Flex>
       </Stack>
     </AppContainer>
   );

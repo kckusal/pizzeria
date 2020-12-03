@@ -15,7 +15,7 @@ const DetailedModalOnClickWithNoSSR = dynamic(() => import("./DetailedModal"), {
 });
 
 function MenuItem({ data, horizontal = false, ...restProps }) {
-  const { id, title, type, image, price } = data;
+  const { _id, title, type, image, price } = data;
 
   const placeholderImageUrl = useSelector(
     state => state.constants.placeholderImageUrl
@@ -35,7 +35,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
       {...restProps}
       zIndex="0"
     >
-      <DetailedModalOnClickWithNoSSR id={id}>
+      <DetailedModalOnClickWithNoSSR id={_id}>
         <Flex
           overflow="hidden"
           position="relative"
@@ -105,7 +105,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
       </DetailedModalOnClickWithNoSSR>
 
       <Stack width="full" px={3} py={horizontal ? 3 : 0} spacing={0}>
-        <DetailedModalOnClickWithNoSSR id={id}>
+        <DetailedModalOnClickWithNoSSR id={_id}>
           <Heading
             as="h3"
             display="inline-block"
@@ -143,7 +143,7 @@ function MenuItem({ data, horizontal = false, ...restProps }) {
           />
 
           <Flex width="full" height="40px" justify="center">
-            <AddToCartButtonWithNoSSR itemId={id} />
+            <AddToCartButtonWithNoSSR itemId={_id} />
           </Flex>
         </Stack>
       </Stack>

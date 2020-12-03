@@ -1,26 +1,34 @@
-import { keyBy } from "lodash";
+import { keyBy, orderBy } from "lodash";
 
-import { actionTypes } from "../actions";
+import { createReducer } from "redux/utils/reducer";
 
 const initialState = {
+  loading: false,
   itemIds: [],
   itemsById: {},
   updatedAt: null
 };
 
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case actionTypes.LOAD_MENU: {
+function reducer(actionTypes) {
+  return {
+    [actionTypes.LOAD_MENU_REQUEST]: (state, action) => {
+      state.loading = true;
+    },
+
+    [actionTypes.LOAD_MENU_SUCCESS]: (state, action) => {
       const { items } = action.payload;
 
-      return {
-        itemIds: items.map(item => item.id),
-        itemsById: keyBy(items, "id"),
-        updatedAt: new Date().toISOString()
-      };
-    }
+      const temp = keyBy(orderBy(items, ["createdAt"], ["desc"]), "_id");
 
-    default:
-      return state;
-  }
+      state.itemsById = temp;
+      state.itemIds = Object.keys(temp);
+      state.updatedAt = new Date().toISOString();
+    },
+
+    [actionTypes.LOAD_MENU_FAILURE]: (state, action) => {
+      state.loading = false;
+    }
+  };
 }
+
+export default createReducer(reducer, initialState);

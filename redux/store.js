@@ -6,11 +6,14 @@ import middlewares, { onStoreCreated } from "./middlewares/";
 import { get, set } from "./utils/localStorage";
 
 const isServer = typeof window === "undefined";
+const dateToday = new Date().toISOString().slice(0, 10);
 
 export const makeStore = context => {
-  const existingState = isServer
-    ? undefined
-    : get(process.env.NEXT_PUBLIC_LOCALSTORAGE_STORED_REDUX_STATE_KEY);
+  const existingState = get(
+    isServer
+      ? undefined
+      : `${process.env.NEXT_PUBLIC_LOCALSTORAGE_STORED_REDUX_STATE_KEY}_${dateToday}`
+  );
 
   const store = createStore(rootReducer, existingState, middlewares);
 
@@ -22,7 +25,7 @@ export const makeStore = context => {
       // this subscription will be called every time some action is dispatched that changes some part of state
       () => {
         set(
-          process.env.NEXT_PUBLIC_LOCALSTORAGE_STORED_REDUX_STATE_KEY,
+          `${process.env.NEXT_PUBLIC_LOCALSTORAGE_STORED_REDUX_STATE_KEY}_${dateToday}`,
           store.getState()
         );
       }

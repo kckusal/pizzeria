@@ -1,6 +1,12 @@
 import Cors from "cors";
 
-const corsWhitelist = ["http://localhost:3000", "http://127.0.0.1:3000"];
+const corsWhitelist = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://pizzeria.kckusal.vercel.app",
+  "http://pizzeria.kckusal.vercel.app",
+  "https://pizzeria.vercel.app"
+];
 
 // Initializing the cors middleware
 export const cors = Cors({

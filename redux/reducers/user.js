@@ -1,33 +1,75 @@
-import { actionTypes } from "../actions";
+import { createReducer } from "../utils/reducer";
 
 const initialState = {
-  authenticated: false,
-  data: {
-    name: "",
+  loading: false,
+  guest: {
+    firstName: "Guest",
+    lastName: "User",
     email: "",
-    phone: "",
-    address: ""
-  }
+    address: "",
+    cart: {}
+  },
+  authenticated: null
 };
 
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case actionTypes.LOGIN_REQUESTED:
-      return {
-        ...state,
-        authenticated: null
-      };
+const reducer = actionTypes => ({
+  [actionTypes.LOGIN_REQUEST]: (state, action) => {
+    state.loading = true;
+  },
 
-    case actionTypes.LOGIN_SUCCESSFUL:
-      return {
-        authenticated: true,
-        data: action.payload.user || initialState.data
-      };
+  [actionTypes.LOGIN_SUCCESS]: (state, action) => {
+    state.loading = false;
+    state.authenticated = action.payload.user;
+  },
 
-    case actionTypes.LOGOUT_SUCCESSFUL:
-      return initialState;
+  [actionTypes.LOGIN_FAILURE]: (state, action) => {
+    state.loading = false;
+    state.authenticated = null;
+  },
 
-    default:
-      return state;
+  [actionTypes.LOGOUT_SUCCESS]: (state, action) => {
+    state.loading = false;
+    state.authenticated = null;
+  },
+
+  [actionTypes.REGISTER_REQUEST]: (state, action) => {
+    state.loading = true;
+  },
+
+  [actionTypes.REGISTER_SUCCESS]: (state, action) => {
+    state.loading = false;
+    state.authenticated = action.payload.user;
+  },
+
+  [actionTypes.REGISTER_FAILURE]: (state, action) => {
+    state.loading = false;
+    state.authenticated = null;
+  },
+
+  [actionTypes.SAVE_CART_SUCCESS]: (state, action) => {
+    const { cart } = action.payload;
+
+    if (state.authenticated) {
+      state.authenticated.cart = cart;
+    } else {
+      state.guest.cart = cart;
+    }
+  },
+
+  [actionTypes.CHECKOUT_SUCCESS]: (state, action) => {
+    const { order } = action.payload;
+
+    if (state.authenticated) {
+      state.authenticated.cart = {};
+      if (!state.authenticated.orders) {
+        state.authenticated.orders = [order];
+      } else {
+        state.authenticated.orders.push(order);
+      }
+    } else {
+      state.guest.cart = {};
+    }
   }
-}
+});
+
+export default createReducer(reducer, initialState);

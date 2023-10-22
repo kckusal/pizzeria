@@ -183,7 +183,7 @@ function CartTable({ setSubtotal, setSourceCurrencyCode }) {
               variant="link"
               display="inline"
               as={Link}
-              href="/menu"
+              href="/"
               colorScheme="blue"
               mx={3}
               fontSize="lg"

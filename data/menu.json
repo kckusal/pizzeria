@@ -3,7 +3,7 @@
     "id": 1,
     "title": "Chicken Lovers",
     "type": "non-veg",
-    "image": "https://oop2.pizzahut.ru/product_pics/small//4/f863041741c3f9ee037075aed8012aa3.png",
+    "image": "images/pizza/chicken-lovers.png",
     "ingredients": "chicken, mushroom, mozzarella cheese, tomato sauce, red onion, olive",
     "price": {
       "value": "32",
@@ -16,7 +16,7 @@
     "id": 2,
     "title": "Chicken BBQ",
     "type": "non-veg",
-    "image": "https://oop2.pizzahut.ru/product_pics/small//4/d091ceb09c21e319a51cc8df10784dfb.png",
+    "image": "images/pizza/chicken-bbq.png",
     "ingredients": "BBQ sauce, bacon, chicken, red onion, bell peppers, mushrooms, mozzarella cheese, fried onions",
     "price": {
       "value": "40",
@@ -28,7 +28,7 @@
     "id": 3,
     "title": "Margarita De Luxe",
     "type": "vegan",
-    "image": "https://oop2.pizzahut.ru/product_pics/small//4/07251fc98d3c680af6f65c672eccc26a.png",
+    "image": "images/pizza/margarita-de-luxe.png",
     "ingredients": "tomato sauce, cherry tomato, mozzarella, cheese, olives",
     "price": {
       "value": "25",
@@ -41,7 +41,7 @@
     "id": 4,
     "title": "Pepperoni Lovers",
     "type": "non-veg",
-    "image": "https://img2.pizzahut.com.au/0x800/smart/f/49069/1800x1800/7884104f31/pepperoni-lovers-lge-pizzas-menu.jpg",
+    "image": "images/pizza/pepperoni-lovers.png",
     "ingredients": "pepperoni, mozzarella",
     "price": {
       "value": "23",
@@ -53,7 +53,7 @@
     "id": 5,
     "title": "Vegan Deluxe",
     "type": "vegan",
-    "image": "https://img2.pizzahut.com.au/0x800/smart/f/49069/1800x1800/727e7bf0c2/vegan-deluxe-lge-pizzas-menu.jpg",
+    "image": "images/pizza/vegan-deluxe.png",
     "ingredients": "garlic, oregano, pineapple, onion, mushroom, green capsicum, diced tomato",
     "price": {
       "value": "33.2",
@@ -63,9 +63,9 @@
 
   {
     "id": 6,
-    "title": "Pepperoni Lovers",
+    "title": "Spicy Pepperoni",
     "type": "dominos",
-    "image": "https://oop2.pizzahut.ru/product_pics/small//4/065e0d76b81b09780c04e8ce95a423ad.png",
+    "image": "images/pizza/spicy-pepperoni.png",
     "ingredients": "tomato sauce, pepperoni, mozzarella cheese",
     "price": {
       "value": "28",
@@ -77,7 +77,7 @@
     "id": 7,
     "title": "Garlic Prawn",
     "type": "vegan",
-    "image": "https://img2.storyblok.com/0x800/smart/f/49069/1800x1800/28b6ff52a7/garlic-prawn-lge-pizzas-menu.jpg",
+    "image": "images/pizza/garlic-prawn.png",
     "ingredients": "Succulent prawns, garlic, diced tomato, green capsicum, mozzarella, aioli drizzle",
     "price": {
       "value": "29.8",
@@ -87,10 +87,10 @@
 
   {
     "id": 8,
-    "title": "Margarita",
+    "title": "Chicken Supreme",
     "type": "vegan",
-    "image": "https://oop2.pizzahut.ru/product_pics/small//4/de184c7f73f381efcd5e79ef61ea7b95.png",
-    "ingredients": "Tomato Sauce, Mozzarella cheese, tomatoes",
+    "image": "images/pizza/chicken-supreme.png",
+    "ingredients": "Tomato Sauce, Mozzarella cheese, tomatoes, chicken",
     "price": {
       "value": "30",
       "discountPercent": 15,
@@ -102,7 +102,7 @@
     "id": 9,
     "title": "BBQ Beef",
     "type": "non-veg",
-    "image": "https://img2.storyblok.com/0x800/smart/f/49069/1800x1800/54edf03dfd/bbq-beef-lge-pizzas-menu.jpg",
+    "image": "images/pizza/bbq-beef.png",
     "ingredients": "beef, mozzarella",
     "price": {
       "value": "41.0",
@@ -113,7 +113,7 @@
     "id": 10,
     "title": "Cheese Lovers",
     "type": "vegan",
-    "image": "https://img2.pizzahut.com.au/0x800/smart/f/49069/1800x1800/0434d7bbcc/cheese-lovers-lge-pizzas-menu.jpg",
+    "image": "images/pizza/cheese-lovers.png",
     "ingredients": "cheddar, mozzarella",
     "price": {
       "value": "34.5",
